@@ -1,8 +1,8 @@
-import {Navbar} from "@/components/navbar.tsx";
 import Musics from "@/components/UI/Musics.tsx";
 
 
 function HomePage() {
+
     return(
         <div>
 

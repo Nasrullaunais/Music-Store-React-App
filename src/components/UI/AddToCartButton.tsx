@@ -1,32 +1,71 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import {Button} from "@heroui/react";
+import {useState} from "react";
+import {useCart} from "../../context/CartContext";
+import { toast } from 'react-toastify';
 
 interface AddToCartButtonProps {
     itemId: number;
+    title: string;
+    artist: string;
+    price: number;
+    image: string;
+    duration?: number;
 }
 
-const AddToCartButton = ({ itemId }: AddToCartButtonProps) => {
+const AddToCartButton = ({ itemId, title, artist, price, image, duration }: AddToCartButtonProps) => {
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
+    const {addItem, isInCart} = useCart();
+    const [loading, setLoading] = useState(false);
 
-    const handleAddToCart = () => {
+    const isTrackInCart = isInCart(itemId);
+
+    const handleAddToCart = async () => {
         if (!isAuthenticated) {
-            // If the user is not logged in, redirect them to the auth page
-            alert('Please log in to add items to your cart.');
+            toast.error('Please log in to add items to your cart.');
             navigate('/auth');
             return;
         }
-        // TODO: Implement the actual add-to-cart logic here
-        console.log(`Item with ID ${itemId} added to cart!`);
+
+        if(isTrackInCart) {
+            toast.info('This track is already in your cart!');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            addItem({
+                id: itemId,
+                title,
+                artist,
+                price,
+                imageUrl: image,
+                duration
+            });
+            toast.success(`"${title}" by ${artist} added to cart!`);
+        } catch (error) {
+            console.error('Error adding item to cart:', error);
+            toast.error('Failed to add item to cart. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <button
-            onClick={handleAddToCart}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+        <Button
+            onPress={handleAddToCart}
+            isLoading={loading}
+            isDisabled={isTrackInCart}
+            className={isTrackInCart ? "text-gray-700" : "text-indigo-950 hover:text-indigo-700"}
+            variant={isTrackInCart ? "shadow" : "faded"}
+            color={isTrackInCart ? "default" : "primary"}
+            size="sm"
+            radius="full"
         >
-            Add to Cart
-        </button>
+            {isTrackInCart ? "In Cart" : "Add to Cart"}
+        </Button>
     );
 };
 

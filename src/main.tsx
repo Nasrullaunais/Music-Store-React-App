@@ -7,16 +7,19 @@ import { Provider } from "./provider.tsx";
 import "@/styles/globals.css";
 import "@/context/AuthContext.tsx"
 import {AuthProvider} from "@/context/AuthContext.tsx";
+import {CartProvider} from "@/context/CartContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
         <AuthProvider>
-            <Provider>
-                <main className="light h-full mr-6 light:bg-gradient-to-br light:from-primary-50 light:to-primary-100 dark:bg-gradient-to-br dark:from-primary-900 dark:to-primary-800">
-                    <App />
-                </main>
-            </Provider>
+            <CartProvider>
+                <Provider>
+                    <main className="light h-full mr-6 light:bg-gradient-to-br light:from-primary-50 light:to-primary-100 dark:bg-gradient-to-br dark:from-primary-900 dark:to-primary-800">
+                        <App />
+                    </main>
+                </Provider>
+            </CartProvider>
         </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

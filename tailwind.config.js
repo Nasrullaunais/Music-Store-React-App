@@ -19,6 +19,7 @@ export default {
           themes: {
               light: {
                   colors: {
+                      default: "#7451ef",
                       primary: "#856be1",
                       secondary: "#ccbffb",
                       accent: "#4e23ff",
@@ -39,7 +40,7 @@ export default {
               dark: {
                   colors: {
                       primary: "#6143d3",
-                      secondary: "#a895e4",
+                      secondary: "#655a81",
                       accent: "#391d95",
                       neutral: "#374151",
                       "base-100": "#ffffff",

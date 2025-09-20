@@ -1,9 +1,11 @@
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import AuthPage from "@/pages/AuthPage.tsx";
 import HomePage from "@/pages/HomePage.tsx";
 import ProfilePage from "@/pages/ProfilePage.tsx";
-import { Navbar } from "./components/navbar";
+import { Navbar } from "./components/common/navbar.tsx";
 
 function App() {
   return (
@@ -16,6 +18,17 @@ function App() {
             <Route element={<AuthPage />} path="/auth" />
             <Route element={<ProfilePage />} path="/profile" />
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
   );
 }
