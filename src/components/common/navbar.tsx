@@ -5,7 +5,6 @@ import {
   NavbarContent,
   NavbarItem,
 } from "@heroui/navbar";
-import {Tabs, Tab} from "@heroui/tabs";
 import {Chip} from "@heroui/chip";
 import { useState } from "react";
 import { FiShoppingCart } from "react-icons/fi";
@@ -15,10 +14,16 @@ import SearchBar from "./SearchBar.tsx";
 import {ThemeSwitch} from "./theme-switch.tsx";
 import { useCart } from "../../context/CartContext";
 import CartDrawer from "./CartDrawer";
+import {useAuth} from "../../context/AuthContext";
 
 export const Navbar = () => {
   const { totalAmount } = useCart();
+  const AuthContext = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const handleLogout = () => {
+    AuthContext.logout();
+  }
 
   return (
     <>
@@ -35,54 +40,6 @@ export const Navbar = () => {
             </Link>
           </NavbarBrand>
         </NavbarContent>
-          <NavbarContent className=" basis-1 pl-4" justify="center">
-              <Tabs
-                  aria-label="Options"
-                  classNames={{
-                      tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
-                      cursor: "w-full bg-[#22d3ee]",
-                      tab: "max-w-fit px-0 h-12",
-                      tabContent: "group-data-[selected=true]:text-[#06b6d4]",
-                  }}
-                  color="primary"
-                  variant="underlined"
-              >
-                  <Tab
-                      key="photos"
-                      title={
-                          <div className="flex items-center space-x-2">
-                              <span>Photos</span>
-                              <Chip size="sm" variant="faded">
-                                  9
-                              </Chip>
-                          </div>
-                      }
-                  />
-                  <Tab
-                      key="music"
-                      title={
-                          <div className="flex items-center space-x-2">
-                              <span>Music</span>
-                              <Chip size="sm" variant="faded">
-                                  3
-                              </Chip>
-                          </div>
-                      }
-                  />
-                  <Tab
-                      key="videos"
-                      title={
-                          <div className="flex items-center space-x-2">
-                              <span>Videos</span>
-                              <Chip size="sm" variant="faded">
-                                  1
-                              </Chip>
-                          </div>
-                      }
-                  />
-              </Tabs>
-          </NavbarContent>
-
           <NavbarContent
           className="hidden sm:flex basis-1/5 sm:basis-full"
           justify="end"
@@ -116,7 +73,10 @@ export const Navbar = () => {
                       color="primary"
                       variant="light"
                       className="text-indigo-950 hover:bg-indigo-100 hover:text-indigo-950 dark:hover:bg-indigo-900 dark:hover:text-indigo-50 rounded-lg bg-indigo-400"
-                      size="md">
+                      size="md"
+                        onPress={() => {
+                            handleLogout();
+                        }}>
                       Logout
                   </Button>
               </NavbarItem>
@@ -130,6 +90,7 @@ export const Navbar = () => {
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
+        isAuthenticated
       />
     </>
   );

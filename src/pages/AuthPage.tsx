@@ -34,7 +34,7 @@ const AuthPage = () => {
     };
 
     return (
-        <div className="flex w-screen h-screen items-center justify-center">
+        <div className="flex w-4/5 h-screen items-center justify-center">
             <div className="w-2/5 backdrop-brightness-110 rounded-large p-8">
                 {error && <p className="text-red-500 text-sm align-middle justify-center">{error}</p>}
                 {isLogin ? (

@@ -58,11 +58,12 @@ const AddToCartButton = ({ itemId, title, artist, price, image, duration }: AddT
             onPress={handleAddToCart}
             isLoading={loading}
             isDisabled={isTrackInCart}
-            className={isTrackInCart ? "text-gray-700" : "text-indigo-950 hover:text-indigo-700"}
             variant={isTrackInCart ? "shadow" : "faded"}
             color={isTrackInCart ? "default" : "primary"}
             size="sm"
             radius="full"
+            className={ isTrackInCart ? "text-gray-200 bg-violet-950" : "bg-violet-900 text-indigo-50 border-0"}
+
         >
             {isTrackInCart ? "In Cart" : "Add to Cart"}
         </Button>

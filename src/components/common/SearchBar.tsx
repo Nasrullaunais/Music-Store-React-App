@@ -43,7 +43,7 @@ export default function SearchBar() {
                     ],
                     innerWrapper: "bg-transparent",
                     inputWrapper: [
-                        "bg-default-200/50",
+                        "bg-indigo-500/15",
                         "dark:bg-default/60",
                         "backdrop-blur-xl",
                         "backdrop-saturate-200",

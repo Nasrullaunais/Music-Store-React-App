@@ -38,6 +38,10 @@ export default function Login({ onLogin, onSwitchToRegister }: LoginProps) {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        classNames={{
+                            input: "bg-gray-800", // Change input background
+                            inputWrapper: "bg-violet-50", // Change wrapper background
+                        }}
                     />
                     <Input
                         isRequired
@@ -45,12 +49,12 @@ export default function Login({ onLogin, onSwitchToRegister }: LoginProps) {
                             <button type="button" onClick={toggleVisibility}>
                                 {isVisible ? (
                                     <Icon
-                                        className="text-default-400 pointer-events-none text-2xl"
+                                        className="text-default-400 pointer-events-none text-2xl mb-1"
                                         icon="solar:eye-closed-linear"
                                     />
                                 ) : (
                                     <Icon
-                                        className="text-default-400 pointer-events-none text-2xl"
+                                        className="text-default-400 pointer-events-none text-2xl mb-1"
                                         icon="solar:eye-bold"
                                     />
                                 )}
@@ -61,7 +65,11 @@ export default function Login({ onLogin, onSwitchToRegister }: LoginProps) {
                         type={isVisible ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="backdrop-brightness-75"
+                        classNames={{
+                            input: "bg-gray-800", // Change input background
+                            inputWrapper: "bg-violet-50", // Change wrapper background
+                        }}
+
                     />
                     <div className="flex w-full items-center justify-between px-1 py-2 ">
                         <Checkbox name="remember" size="sm" color={ "primary" } defaultSelected={true}>
@@ -71,7 +79,7 @@ export default function Login({ onLogin, onSwitchToRegister }: LoginProps) {
                             Forgot password?
                         </NextLink>
                     </div>
-                    <Button className="w-full" color={"primary"} type="submit">
+                    <Button className="w-full text-white" color={"primary"} type="submit">
                         Sign In
                     </Button>
                 </Form>

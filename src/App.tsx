@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import {Route, Routes, useLocation} from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -8,10 +8,14 @@ import ProfilePage from "@/pages/ProfilePage.tsx";
 import { Navbar } from "./components/common/navbar.tsx";
 
 function App() {
+    const location = useLocation();
+
+    const authRoutes = ["/auth" ];
+    const hideNavbar = authRoutes.includes(location.pathname);
   return (
       <div className={"flex flex-col items-center justify-center min-h-screen"}>
         <div className={"sticky top-0 z-50 rounded-large"}>
-             <Navbar></Navbar>
+            {!hideNavbar && <Navbar />}
         </div>
         <Routes>
             <Route element={<HomePage />} path="/" />

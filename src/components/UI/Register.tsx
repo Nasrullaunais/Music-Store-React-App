@@ -53,7 +53,7 @@ export default function Register({ onRegister, onSwitchToLogin}: RegisterProps) 
                             classNames={{
                                 base: "-mb-[2px]",
                                 inputWrapper:
-                                    "rounded-b-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 mt-3",
+                                    "rounded-b-none bg-violet-50 data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 mt-3",
                             }}
                             label="Username"
                             name="username"
@@ -66,7 +66,7 @@ export default function Register({ onRegister, onSwitchToLogin}: RegisterProps) 
                             classNames={{
                                 base: "-mb-[2px]",
                                 inputWrapper:
-                                    "rounded-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10",
+                                    "rounded-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 bg-violet-50",
                             }}
                             label="Email Address"
                             name="email"
@@ -79,7 +79,7 @@ export default function Register({ onRegister, onSwitchToLogin}: RegisterProps) 
                             classNames={{
                                 base: "-mb-[2px]",
                                 inputWrapper:
-                                    "rounded-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10",
+                                    "rounded-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 bg-violet-50",
                             }}
                             endContent={
                                 <button type="button" onClick={toggleVisibility}>
@@ -105,7 +105,7 @@ export default function Register({ onRegister, onSwitchToLogin}: RegisterProps) 
                         <Input
                             isRequired
                             classNames={{
-                                inputWrapper: "rounded-t-none",
+                                inputWrapper: "rounded-t-none bg-violet-50",
                             }}
                             endContent={
                                 <button type="button" onClick={toggleConfirmVisibility}>
@@ -131,7 +131,7 @@ export default function Register({ onRegister, onSwitchToLogin}: RegisterProps) 
                         <Input
                             isRequired
                             classNames={{
-                                inputWrapper: "rounded-b-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 mt-3",
+                                inputWrapper: "rounded-b-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 mt-3 bg-violet-50",
                             }}
                             label="First Name"
                             name="firstName"
@@ -142,7 +142,7 @@ export default function Register({ onRegister, onSwitchToLogin}: RegisterProps) 
                         <Input
                             isRequired
                             classNames={{
-                                inputWrapper: "rounded-t-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10",
+                                inputWrapper: "rounded-t-none data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 bg-violet-50",
                             }}
                             label="Last Name"
                             name="lastName"
@@ -154,7 +154,7 @@ export default function Register({ onRegister, onSwitchToLogin}: RegisterProps) 
                             <Input
                             isRequired
                             classNames={{
-                            inputWrapper: "rounded-b-t data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 mt-3 transition-all duration-300",
+                            inputWrapper: "rounded-b-t data-[hover=true]:z-10 group-data-[focus-visible=true]:z-10 mt-3 transition-all duration-300 bg-violet-50",
                             }}
                             label="Artist Name"
                             name="artistName"

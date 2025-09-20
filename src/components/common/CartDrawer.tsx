@@ -16,9 +16,10 @@ import { toast } from 'react-toastify';
 interface CartDrawerProps {
     isOpen: boolean;
     onClose: () => void;
+    isAuthenticated?: boolean;
 }
 
-const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
+const CartDrawer = ({ isOpen, onClose, isAuthenticated }: CartDrawerProps) => {
     const { items, total, removeItem, clearCart } = useCart();
 
     const handleRemoveItem = (itemId: number, title: string) => {
@@ -33,6 +34,14 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
 
     const handleCheckout = () => {
         // TODO: Implement checkout logic
+        if (!isAuthenticated) {
+            toast.error('Please log in to checkout.');
+            return;
+        } else {
+
+
+        }
+
         toast.info('Checkout functionality coming soon!');
     };
 

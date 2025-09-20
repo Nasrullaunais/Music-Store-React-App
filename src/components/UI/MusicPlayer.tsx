@@ -75,9 +75,9 @@ const MusicPlayer = ({ fileUrl }: MusicPlayerProps) => {
         <div>
             <button onClick={handlePlayPause}>
                 {isPlaying ? (
-                    <FaPause className="text-xl text-indigo-600 hover:text-indigo-700 mt-1 hover:scale-110 transition-transform duration-300 ml-1" />
+                    <FaPause className="text-sm text-indigo-600 hover:text-indigo-700 mt-1 hover:scale-110 transition-transform duration-300 ml-1" />
                 ) : (
-                    <FaPlay className="text-xl text-indigo-600 hover:text-indigo-700 mt-1 hover:scale-110 transition-transform duration-300 ml-1" />
+                    <FaPlay className="text-sm text-indigo-600 hover:text-indigo-700 mt-1 hover:scale-110 transition-transform duration-300 ml-1" />
                 )}
             </button>
             <audio ref={audioRef}> {/* No `controls` attribute here */}
