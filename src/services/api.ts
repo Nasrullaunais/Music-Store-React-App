@@ -32,14 +32,16 @@ export const API_ENDPOINTS = {
         ARTISTS: '/api/music/artists',
         FEATURED: '/api/music/featured',
         SEARCH: '/api/music/search',
+        PURCHASED: '/api/customer/purchased',
     },
 
     // Cart Endpoints
     CART: {
         GET: '/api/cart',
         ADD: (musicId: number) => `/api/cart/add/${musicId}`,
-        REMOVE: (musicId: number) => `/api/cart/remove/${musicId}`,
+        REMOVE: (itemId: number) => `/api/cart/remove/${itemId}`,
         CLEAR: '/api/cart/clear',
+        CHECKOUT: '/api/cart/checkout',
     },
 
     // Review Endpoints

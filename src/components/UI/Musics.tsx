@@ -3,7 +3,8 @@ import { Card, CardBody, CardHeader, Image } from '@heroui/react';
 import { fetchAllMusic, PaginatedResponse } from '@/api/music.ts';
 import { Music } from '@/types';
 import AddToCartButton from './AddToCartButton';
-import MusicPlayer from "@/components/UI/MusicPlayer.tsx";
+import MusicPreview from "@/components/UI/MusicPreview.tsx";
+import { AiFillStar } from "react-icons/ai";
 // import SearchBar from "@/components/common/SearchBar.tsx";
 
 
@@ -58,7 +59,7 @@ const MusicPage = () => {
                                     <small className="text-default-500">by {track.artist}</small>
                                 </div>
                                 <div className="flex flex-row gap-2  justify-center items-center bg-gray-300 rounded-xl p-1 mt-2">
-                                    <MusicPlayer fileUrl={audioUrl.concat(track.audioFilePath as string)}></MusicPlayer>
+                                    <MusicPreview fileUrl={audioUrl.concat(track.audioFilePath as string)}></MusicPreview>
                                     <p className="text-tiny text-center mb-1 mr-1 mt-1">Preview</p>
                                 </div>
                             </div>
@@ -72,6 +73,7 @@ const MusicPage = () => {
                                 height={200}
                                 isBlurred={true}
                             />
+                            <p className="text-tiny mt-2">{track.averageRating}/5 ({track.reviewCount}) <AiFillStar style={{color: "yellow"}} size={16} /></p>
                             <div className="mt-auto flex items-center justify-between pt-2 w-full px-1">
                                 <p className="text-lg font-bold text-indigo-800">${track.price.toFixed(2)}</p>
                                 <AddToCartButton

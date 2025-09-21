@@ -8,7 +8,7 @@ interface MusicPlayerProps {
     fileUrl: string;
 }
 
-const MusicPlayer = ({ fileUrl }: MusicPlayerProps) => {
+const MusicPreview = ({ fileUrl }: MusicPlayerProps) => {
     const audioRef = useRef<HTMLAudioElement>(null);
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
@@ -88,4 +88,4 @@ const MusicPlayer = ({ fileUrl }: MusicPlayerProps) => {
     );
 };
 
-export default MusicPlayer;
+export default MusicPreview;

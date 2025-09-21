@@ -5,7 +5,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import AuthPage from "@/pages/AuthPage.tsx";
 import HomePage from "@/pages/HomePage.tsx";
 import ProfilePage from "@/pages/ProfilePage.tsx";
+import CartPage from "@/pages/CartPage.tsx";
 import { Navbar } from "./components/common/navbar.tsx";
+import {PurchasedMusic} from "@/pages/PurhcasedMusicPage.tsx";
 
 function App() {
     const location = useLocation();
@@ -21,6 +23,8 @@ function App() {
             <Route element={<HomePage />} path="/" />
             <Route element={<AuthPage />} path="/auth" />
             <Route element={<ProfilePage />} path="/profile" />
+            <Route element={<CartPage />} path="/cart" />
+            <Route element={<PurchasedMusic />} path="/my-music" />
         </Routes>
         <ToastContainer
           position="top-right"

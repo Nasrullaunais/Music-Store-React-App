@@ -1,71 +1,58 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import {Button} from "@heroui/react";
-import {useState} from "react";
-import {useCart} from "../../context/CartContext";
-import { toast } from 'react-toastify';
+import React, { useState } from 'react';
+import { Button } from '@heroui/react';
+import { FiShoppingCart, FiCheck } from 'react-icons/fi';
+import { useCart } from '@/context/CartContext';
 
 interface AddToCartButtonProps {
     itemId: number;
-    title: string;
-    artist: string;
-    price: number;
-    image: string;
+    title?: string;
+    artist?: string;
+    price?: number;
+    image?: string;
     duration?: number;
 }
 
-const AddToCartButton = ({ itemId, title, artist, price, image, duration }: AddToCartButtonProps) => {
-    const { isAuthenticated } = useAuth();
-    const navigate = useNavigate();
-    const {addItem, isInCart} = useCart();
-    const [loading, setLoading] = useState(false);
+const AddToCartButton: React.FC<AddToCartButtonProps> = ({
+    itemId
+}) => {
+    const { addToCart, isInCart } = useCart();
+    const [isAdding, setIsAdding] = useState(false);
 
-    const isTrackInCart = isInCart(itemId);
+    const inCart = isInCart(itemId);
 
     const handleAddToCart = async () => {
-        if (!isAuthenticated) {
-            toast.error('Please log in to add items to your cart.');
-            navigate('/auth');
-            return;
-        }
+        if (inCart) return;
 
-        if(isTrackInCart) {
-            toast.info('This track is already in your cart!');
-            return;
-        }
-
-        setLoading(true);
         try {
-            addItem({
-                id: itemId,
-                title,
-                artist,
-                price,
-                imageUrl: image,
-                duration
-            });
-            toast.success(`"${title}" by ${artist} added to cart!`);
+            setIsAdding(true);
+            await addToCart(itemId);
         } catch (error) {
-            console.error('Error adding item to cart:', error);
-            toast.error('Failed to add item to cart. Please try again.');
+            // Error handling is done in the cart context
         } finally {
-            setLoading(false);
+            setIsAdding(false);
         }
     };
 
     return (
         <Button
-            onPress={handleAddToCart}
-            isLoading={loading}
-            isDisabled={isTrackInCart}
-            variant={isTrackInCart ? "shadow" : "faded"}
-            color={isTrackInCart ? "default" : "primary"}
             size="sm"
-            radius="full"
-            className={ isTrackInCart ? "text-gray-200 bg-violet-950" : "bg-violet-900 text-indigo-50 border-0"}
-
+            color={inCart ? "success" : "primary"}
+            variant={inCart ? "flat" : "solid"}
+            onPress={handleAddToCart}
+            isDisabled={inCart || isAdding}
+            startContent={
+                inCart ? <FiCheck size={16} /> : <FiShoppingCart size={16} />
+            }
+            className={`
+                min-w-fit px-3 py-2 text-xs font-medium transition-all duration-200
+                ${inCart 
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' 
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }
+                ${isAdding ? 'opacity-75' : ''}
+            `}
         >
-            {isTrackInCart ? "In Cart" : "Add to Cart"}
+            {isAdding ? 'Adding...' : inCart ? 'In Cart' : 'Add to Cart'}
         </Button>
     );
 };

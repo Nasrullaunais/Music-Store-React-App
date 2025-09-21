@@ -3,25 +3,27 @@ import { SVGProps } from "react";
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
+
+export type UserRole = 'CUSTOMER' | 'ARTIST' | 'STAFF' | 'ADMIN';
+
 // Data models for the Music Store application
 export interface User {
     id: number;
     username: string;
     email: string;
-    role: 'CUSTOMER' | 'ARTIST' | 'STAFF' | 'ADMIN';
+    role: UserRole;
     firstName?: string;
     lastName?: string;
     artistName?: string;
     cover?: string;
 }
 
-
 export interface Music {
     id: number;
     name: string;
     title?: string; // For backward compatibility
     artist: string;
-    album?: string; // This should be here and accessible
+    album?: string;
     genre?: string;
     imageUrl?: string;
     coverImage?: string; // For backward compatibility
@@ -30,7 +32,6 @@ export interface Music {
     description?: string;
     releaseYear?: number;
     duration?: number;
-    // Analytics and stats properties
     totalSales?: number;
     averageRating?: number;
     reviewCount?: number;
@@ -50,17 +51,44 @@ export interface RegistrationData extends LoginCredentials {
     cover?: string;
 }
 
-
-
-export interface Album {
+// Cart-related types for backend integration
+export interface CartItem {
     id: number;
-    title: string;
-    artist: string;
-    genre: string;
-    price: number;
-    releaseDate: string;
-    imageUrl?: string;
-    description?: string;
+    unitPrice: number;
+    totalPrice: number;
+    music: Music;
+}
+
+export interface Cart {
+    id: number;
+    customerUsername: string;
+    total: number;
+    items: CartItem[];
+}
+
+export interface CartDto {
+    id: number;
+    customerUsername: string;
+    total: number;
+    items: CartItem[];
+}
+
+export interface OrderItem {
+    id: number;
+    music: Music;
+    unitPrice: number;
+    musicTitle: string;
+    artistName: string;
+}
+
+export interface Order {
+    id: number;
+    customer: User;
+    orderDate: string;
+    totalAmount: number;
+    status: string;
+    paymentMethod?: string;
+    orderItems: OrderItem[];
 }
 
 export interface Artist {
@@ -75,36 +103,10 @@ export interface Genre {
     name: string;
 }
 
-export interface CartItem {
-    id: number;
-    album: Album;
-    quantity: number;
-}
-
 export interface ApiResponse<T> {
     data: T;
     message?: string;
     success: boolean;
-}
-
-export interface CartItem {
-    id: number;
-    music: Music;
-    quantity: number;
-    totalPrice: number;
-}
-
-export interface Order {
-    id: number;
-    totalAmount: number;
-    orderDate: string;
-    status: string;
-    items: Array<{
-        id: number;
-        music: Music;
-        quantity: number;
-        price: number;
-    }>;
 }
 
 export interface Playlist {
@@ -116,8 +118,3 @@ export interface Playlist {
     isPublic: boolean;
     createdAt: string;
 }
-
-
-
-
-export type UserRole = 'CUSTOMER' | 'ARTIST' | 'STAFF' | 'ADMIN';
