@@ -35,6 +35,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             getCurrentUser()
                 .then(currentUser => {
                     setUser(currentUser);
+                    // Role-based redirect for existing sessions
+                    const currentPath = window.location.pathname;
+                    if (currentPath === '/' || currentPath === '/auth') {
+                        if (currentUser.role === 'STAFF' || currentUser.role === 'ADMIN') {
+                            navigate('/staff');
+                        }
+                    }
                 })
                 .catch(() => {
                     // If token is invalid, clear it and user
@@ -48,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } else {
             setLoading(false);
         }
-    }, []);
+    }, [navigate]);
 
     const login = (userData: User) => {
         setUser(userData);

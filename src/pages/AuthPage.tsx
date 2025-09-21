@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {loginUser, registerUser} from "../api/auth";
 import Register from "../components/UI/Register";
 import Login from "../components/UI/Login";
-import { LoginCredentials, RegistrationData } from '@/types';
+import { LoginCredentials, RegisterData } from '@/types';
 import {useAuth} from "@/context/AuthContext.tsx";
 
 const AuthPage = () => {
@@ -16,18 +16,30 @@ const AuthPage = () => {
         try {
             const user = await loginUser(credentials);
             login(user)
-            navigate('/'); // Redirect on success
+
+            // Role-based redirect
+            if (user.role === 'STAFF' || user.role === 'ADMIN') {
+                navigate('/staff');
+            } else {
+                navigate('/');
+            }
         } catch (error: any) {
             // You can handle errors here, e.g., by setting an error message state
             setError(error.message);
         }
     };
 
-    const handleRegister = async (userData: RegistrationData) => {
+    const handleRegister = async (userData: RegisterData) => {
         try {
             const user = await registerUser(userData);
             login(user)
-            navigate('/'); // Redirect on success
+
+            // Role-based redirect
+            if (user.role === 'STAFF' || user.role === 'ADMIN') {
+                navigate('/staff');
+            } else {
+                navigate('/');
+            }
         } catch (error: any) {
             setError(error.message);
         }

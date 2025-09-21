@@ -140,17 +140,30 @@ export interface Ticket {
   id: number;
   subject: string;
   status: 'OPEN' | 'IN_PROGRESS' | 'URGENT' | 'CLOSED';
+  description?: string;
+  priority?: string;
   customer: {
     id: number;
     username: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
   };
-  assignedStaff?: {
+  staff?: {
     id: number;
     username: string;
+    email: string;
   } | null;
   createdAt: string;
+  lastUpdated?: string;
   closedAt?: string | null;
-  messages: TicketMessage[];
+  messages?: TicketMessage[];
+
+  // Legacy fields for backward compatibility
+  customerName?: string;
+  assignedStaffName?: string | null;
+  assigned?: boolean;
+  closed?: boolean;
 }
 
 export interface CreateTicketRequest {

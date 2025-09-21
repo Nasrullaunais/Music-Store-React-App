@@ -52,6 +52,13 @@ export const Navbar = () => {
                     My Music
                 </p>
             </NavbarItem>
+            {(AuthContext.user?.role === 'STAFF' || AuthContext.user?.role === 'ADMIN') && (
+                <NavbarItem>
+                    <p className="text-md text-gray-800 font-bold" onClick={() => navigate('/staff')} style={{cursor: 'pointer'}}>
+                        Staff Dashboard
+                    </p>
+                </NavbarItem>
+            )}
             <NavbarItem>
                 <p className="text-md text-gray-800 font-bold" onClick={() => navigate('/support')} style={{cursor: 'pointer'}}>
                     Support

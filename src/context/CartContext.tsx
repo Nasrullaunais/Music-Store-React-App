@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Cart } from '@/types';
 import { cartApi } from '@/api/cart';
 import { toast } from 'react-toastify';
+import { useAuth } from './AuthContext';
 
 interface CartContextType {
     cart: Cart | null;
@@ -31,16 +32,23 @@ interface CartProviderProps {
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const [cart, setCart] = useState<Cart | null>(null);
     const [loading, setLoading] = useState(false);
+    const { user } = useAuth();
 
     const refreshCart = async () => {
+        // Only load cart for customers
+        if (!user || (user.role !== 'CUSTOMER' && user.role !== 'ARTIST')) {
+            setCart(null);
+            return;
+        }
+
         try {
             setLoading(true);
             const cartData = await cartApi.getCart();
             setCart(cartData);
         } catch (error: any) {
             console.error('Error fetching cart:', error);
-            // Don't show error toast for 401 as it means user is not logged in
-            if (error.response?.status !== 401) {
+            // Don't show error toast for 401/403 as it means user doesn't have cart access
+            if (error.response?.status !== 401 && error.response?.status !== 403) {
                 toast.error('Failed to load cart');
             }
             setCart(null);
@@ -96,13 +104,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     const itemCount = cart?.items.length || 0;
 
-    // Load cart on mount if user is authenticated
+    // Load cart when user changes and is a customer/artist
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
+        if (user && (user.role === 'CUSTOMER' || user.role === 'ARTIST')) {
             refreshCart();
+        } else {
+            setCart(null);
         }
-    }, []);
+    }, [user]);
 
     const value: CartContextType = {
         cart,

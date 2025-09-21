@@ -65,10 +65,16 @@ export const API_ENDPOINTS = {
     STAFF: {
         TICKETS: '/api/staff/tickets',
         TICKET_BY_ID: (ticketId: number) => `/api/staff/tickets/${ticketId}`,
+        TICKET_MESSAGES: (ticketId: number) => `/api/staff/tickets/${ticketId}/messages`,
         TICKET_REPLY: (ticketId: number) => `/api/staff/tickets/${ticketId}/reply`,
+        TICKET_ASSIGN: (ticketId: number) => `/api/staff/tickets/${ticketId}/assign`,
         TICKET_STATUS: (ticketId: number) => `/api/staff/tickets/${ticketId}/status`,
-        ANALYTICS: '/api/staff/analytics/website',
-        REPORTS_SALES: '/api/staff/reports/sales',
+        TICKET_CLOSE: (ticketId: number) => `/api/staff/tickets/${ticketId}/close`,
+        TICKETS_URGENT: '/api/staff/tickets/urgent',
+        TICKETS_NEEDS_ATTENTION: '/api/staff/tickets/needs-attention',
+        TICKETS_UNASSIGNED: '/api/staff/tickets/unassigned',
+        TICKETS_SEARCH: '/api/staff/tickets/search',
+        TICKETS_STATS: '/api/staff/tickets/stats',
     },
 
     // Admin Endpoints (if needed)
