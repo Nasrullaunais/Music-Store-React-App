@@ -12,8 +12,10 @@ import {
     removeMusicFromPlaylist
 } from "@/api/playlist.ts";
 import AudioPlayer from "@/components/common/MusicPlayer.tsx";
+import MusicReviews from "@/components/UI/MusicReviews.tsx";
 import {PlayIcon, PauseIcon, MoreVerticalIcon, PlusIcon, PlaylistIcon} from "@/components/icons.tsx";
 import {Tabs, Tab, Card, CardBody, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Textarea} from "@heroui/react";
+import {FiStar, FiMessageSquare} from 'react-icons/fi';
 import {toast} from "react-toastify";
 
 // Helper function to check if music is in playlist
@@ -32,6 +34,7 @@ interface MusicCardProps {
 
 const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allPlaylists, onPlaylistUpdate }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState('');
     const [newPlaylistDescription, setNewPlaylistDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -81,7 +84,7 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
 
     return (
         <>
-            <div className="bg-white rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onPlay(music)}>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onPlay(music)}>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
                         {/* Play/Pause Icon */}
@@ -89,18 +92,27 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                             {isCurrentlyPlaying ? (
                                 <PauseIcon size={20} className="text-blue-600" />
                             ) : (
-                                <PlayIcon size={20} className="text-gray-600" />
+                                <PlayIcon size={20} className="text-gray-600 dark:text-gray-400" />
                             )}
                         </div>
 
                         {/* Music Info */}
                         <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 truncate">
+                            <h3 className="font-semibold text-gray-900 dark:text-white truncate">
                                 {music.name || music.title}
                             </h3>
-                            <p className="text-sm text-gray-600 truncate">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
                                 {music.artist}
                             </p>
+                            {/* Display rating if available */}
+                            {music.averageRating && music.reviewCount && (
+                                <div className="flex items-center gap-1 mt-1">
+                                    <FiStar size={14} className="text-yellow-400 fill-current" />
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                        {music.averageRating.toFixed(1)} ({music.reviewCount} reviews)
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -118,10 +130,12 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
-                                aria-label="Playlist actions"
+                                aria-label="Music actions"
                                 onAction={(key) => {
                                     if (key === "create") {
                                         setIsModalOpen(true);
+                                    } else if (key === "review") {
+                                        setIsReviewModalOpen(true);
                                     } else {
                                         const playlistId = parseInt(key.toString().replace('playlist-', ''));
                                         const playlist = allPlaylists.find(p => p.id === playlistId);
@@ -136,6 +150,7 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                                     }
                                 }}
                                 items={[
+                                    { key: "review", label: "Reviews & Ratings", icon: <FiMessageSquare size={16} /> },
                                     { key: "create", label: "Create new playlist", icon: <PlusIcon size={16} /> },
                                     ...allPlaylists.map((playlist) => {
                                         const isInPlaylist = isMusicInPlaylist(playlist, music.id);
@@ -191,6 +206,36 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                             Create & Add
                         </Button>
                     </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            {/* Reviews Modal */}
+            <Modal
+                isOpen={isReviewModalOpen}
+                onClose={() => setIsReviewModalOpen(false)}
+                size="2xl"
+                scrollBehavior="inside"
+            >
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1">
+                        <h3>Reviews for "{music.name || music.title}"</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 font-normal">
+                            by {music.artist}
+                        </p>
+                    </ModalHeader>
+                    <ModalBody className="px-0">
+                        <div className="px-6">
+                            <MusicReviews
+                                musicId={music.id}
+                                musicTitle={music.name || music.title || ''}
+                                musicArtist={music.artist}
+                                onReviewChange={() => {
+                                    // Optionally refresh music data to update rating display
+                                    console.log('Review changed for music:', music.id);
+                                }}
+                            />
+                        </div>
+                    </ModalBody>
                 </ModalContent>
             </Modal>
         </>

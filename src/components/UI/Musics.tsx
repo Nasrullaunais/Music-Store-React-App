@@ -73,7 +73,19 @@ const MusicPage = () => {
                                 height={200}
                                 isBlurred={true}
                             />
-                            <p className="text-tiny mt-2">{track.averageRating}/5 ({track.reviewCount}) <AiFillStar style={{color: "yellow"}} size={16} /></p>
+                            {/* Rating Display - Fixed */}
+                            {track.averageRating && track.totalReviews ? (
+                                <div className="flex items-center gap-1 mt-2">
+                                    <span className="text-tiny">{track.averageRating.toFixed(1)}/5</span>
+                                    <span className="text-tiny">({track.totalReviews})</span>
+                                    <AiFillStar style={{color: "yellow"}} size={16} />
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-1 mt-2">
+                                    <span className="text-tiny text-gray-500">No reviews yet</span>
+                                    <AiFillStar style={{color: "gray"}} size={16} />
+                                </div>
+                            )}
                             <div className="mt-auto flex items-center justify-between pt-2 w-full px-1">
                                 <p className="text-lg font-bold text-indigo-800">${track.price.toFixed(2)}</p>
                                 <AddToCartButton

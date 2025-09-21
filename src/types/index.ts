@@ -33,8 +33,8 @@ export interface Music {
     releaseYear?: number;
     duration?: number;
     totalSales?: number;
-    averageRating?: number;
-    reviewCount?: number;
+    averageRating: number;
+    totalReviews: number;
 }
 
 export interface Playlist {
@@ -53,69 +53,69 @@ export interface LoginCredentials {
     password: string;
 }
 
-export interface RegistrationData extends LoginCredentials {
+export interface RegisterData {
+    username: string;
+    password: string;
     email: string;
-    role: 'CUSTOMER' | 'ARTIST';
+    role: UserRole;
     firstName?: string;
     lastName?: string;
     artistName?: string;
     cover?: string;
 }
 
-// Cart-related types for backend integration
+// Review types based on API documentation
+export interface Review {
+    id: number;
+    musicId: number;
+    username: string;
+    customerName: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+    updatedAt: string;
+    isOwnReview: boolean;
+}
+
+export interface CreateReviewRequest {
+    rating: number;
+    comment: string;
+}
+
+export interface UpdateReviewRequest {
+    rating: number;
+    comment: string;
+}
+
+export interface ReviewsResponse {
+    content: Review[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+}
+
+export interface ReviewStats {
+    totalReviews: number;
+    averageRating: number;
+    ratingDistribution: {
+        [key: string]: number;
+    };
+}
+
+// Cart types
 export interface CartItem {
     id: number;
-    unitPrice: number;
-    totalPrice: number;
-    music: Music;
+    musicId: number;
+    musicTitle: string;
+    musicArtist: string;
+    price: number;
+    quantity: number;
 }
 
 export interface Cart {
     id: number;
-    customerUsername: string;
-    total: number;
+    customerId: number;
     items: CartItem[];
-}
-
-export interface CartDto {
-    id: number;
-    customerUsername: string;
-    total: number;
-    items: CartItem[];
-}
-
-export interface OrderItem {
-    id: number;
-    music: Music;
-    unitPrice: number;
-    musicTitle: string;
-    artistName: string;
-}
-
-export interface Order {
-    id: number;
-    customer: User;
-    orderDate: string;
-    totalAmount: number;
-    status: string;
-    paymentMethod?: string;
-    orderItems: OrderItem[];
-}
-
-export interface Artist {
-    id: number;
-    name: string;
-    biography?: string;
-    imageUrl?: string;
-}
-
-export interface Genre {
-    id: number;
-    name: string;
-}
-
-export interface ApiResponse<T> {
-    data: T;
-    message?: string;
-    success: boolean;
+    totalPrice: number;
 }
