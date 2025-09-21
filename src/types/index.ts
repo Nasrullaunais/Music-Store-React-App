@@ -119,3 +119,45 @@ export interface Cart {
     items: CartItem[];
     totalPrice: number;
 }
+
+// Ticket System Types
+export interface TicketMessage {
+  id: number;
+  content: string;
+  timestamp: string;
+  isFromStaff: boolean;
+  customer?: {
+    id: number;
+    username: string;
+  };
+  staff?: {
+    id: number;
+    username: string;
+  };
+}
+
+export interface Ticket {
+  id: number;
+  subject: string;
+  status: 'OPEN' | 'IN_PROGRESS' | 'URGENT' | 'CLOSED';
+  customer: {
+    id: number;
+    username: string;
+  };
+  assignedStaff?: {
+    id: number;
+    username: string;
+  } | null;
+  createdAt: string;
+  closedAt?: string | null;
+  messages: TicketMessage[];
+}
+
+export interface CreateTicketRequest {
+  subject: string;
+  description: string;
+}
+
+export interface AddMessageRequest {
+  content: string;
+}

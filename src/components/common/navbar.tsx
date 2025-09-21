@@ -52,6 +52,12 @@ export const Navbar = () => {
                     My Music
                 </p>
             </NavbarItem>
+            <NavbarItem>
+                <p className="text-md text-gray-800 font-bold" onClick={() => navigate('/support')} style={{cursor: 'pointer'}}>
+                    Support
+                </p>
+            </NavbarItem>
+
         </NavbarContent>
           <NavbarContent
           className="hidden sm:flex basis-1/5 sm:basis-full"

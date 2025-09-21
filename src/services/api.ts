@@ -50,7 +50,15 @@ export const API_ENDPOINTS = {
         CREATE: '/api/reviews',
         UPDATE: (reviewId: number) => `/api/reviews/${reviewId}`,
         DELETE: (reviewId: number) => `/api/reviews/${reviewId}`,
-        STATS: (musicId: number) => `/api/reviews/music/${musicId}/stats`,
+    },
+
+    // Ticket/Support Endpoints
+    TICKETS: {
+        CREATE: '/api/customer/support/ticket',
+        GET_CUSTOMER_TICKETS: '/api/customer/support/tickets',
+        ADD_MESSAGE: (ticketId: number) => `/api/customer/support/ticket/${ticketId}/message`,
+        GET_MESSAGES: (ticketId: number) => `/api/customer/support/ticket/${ticketId}/messages`,
+        GET_BY_ID: (ticketId: number) => `/api/customer/support/ticket/${ticketId}`,
     },
 
     // Staff Endpoints
