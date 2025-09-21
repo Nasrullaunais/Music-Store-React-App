@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Button } from '@heroui/react';
 import { FiShoppingCart, FiCheck } from 'react-icons/fi';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface AddToCartButtonProps {
     itemId: number;
@@ -16,6 +18,8 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
     itemId
 }) => {
     const { addToCart, isInCart } = useCart();
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
     const [isAdding, setIsAdding] = useState(false);
 
     const inCart = isInCart(itemId);
@@ -23,11 +27,21 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
     const handleAddToCart = async () => {
         if (inCart) return;
 
+        // Check if user is authenticated
+        if (!isAuthenticated) {
+            navigate('/auth');
+            return;
+        }
+
         try {
             setIsAdding(true);
             await addToCart(itemId);
-        } catch (error) {
-            // Error handling is done in the cart context
+        } catch (error: any) {
+            // Handle 401 authentication errors specifically
+            if (error.response?.status === 401) {
+                navigate('/auth');
+            }
+            // Other error handling is done in the cart context
         } finally {
             setIsAdding(false);
         }

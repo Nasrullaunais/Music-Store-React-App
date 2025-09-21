@@ -37,6 +37,17 @@ export interface Music {
     reviewCount?: number;
 }
 
+export interface Playlist {
+    id: number;
+    name: string;
+    customerId: number;
+    customerUsername: string;
+    trackCount: number;
+    createdAt: string;
+    updatedAt: string;
+    musics?: Music[];
+}
+
 export interface LoginCredentials {
     username: string;
     password: string;
@@ -107,14 +118,4 @@ export interface ApiResponse<T> {
     data: T;
     message?: string;
     success: boolean;
-}
-
-export interface Playlist {
-    id: number;
-    name: string;
-    description?: string;
-    tracks: Music[];
-    coverImage?: string;
-    isPublic: boolean;
-    createdAt: string;
 }
