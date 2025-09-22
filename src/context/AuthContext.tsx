@@ -38,7 +38,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                     // Role-based redirect for existing sessions
                     const currentPath = window.location.pathname;
                     if (currentPath === '/' || currentPath === '/auth') {
-                        if (currentUser.role === 'STAFF' || currentUser.role === 'ADMIN') {
+                        if (currentUser.role === 'ADMIN') {
+                            navigate('/admin');
+                        } else if (currentUser.role === 'STAFF') {
                             navigate('/staff');
                         }
                     }

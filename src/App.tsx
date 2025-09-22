@@ -8,6 +8,7 @@ import ProfilePage from "@/pages/ProfilePage.tsx";
 import CartPage from "@/pages/CartPage.tsx";
 import SupportPage from "@/pages/SupportPage.tsx";
 import StaffDashboard from "@/pages/StaffDashboard.tsx";
+import AdminDashboard from "@/pages/AdminDashboard.tsx";
 import { Navbar } from "./components/common/navbar.tsx";
 import {PurchasedMusic} from "@/pages/PurhcasedMusicPage.tsx";
 import ProtectedRoute from "./components/common/ProtectedRoutes.tsx";
@@ -38,11 +39,19 @@ function App() {
             />
             <Route
               element={
-                <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
+                <ProtectedRoute allowedRoles={['STAFF']}>
                   <StaffDashboard />
                 </ProtectedRoute>
               }
               path="/staff"
+            />
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['ADMIN']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+              path="/admin"
             />
         </Routes>
         <ToastContainer

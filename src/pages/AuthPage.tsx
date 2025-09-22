@@ -18,7 +18,9 @@ const AuthPage = () => {
             login(user)
 
             // Role-based redirect
-            if (user.role === 'STAFF' || user.role === 'ADMIN') {
+            if (user.role === 'ADMIN') {
+                navigate('/admin');
+            } else if (user.role === 'STAFF') {
                 navigate('/staff');
             } else {
                 navigate('/');
@@ -35,7 +37,9 @@ const AuthPage = () => {
             login(user)
 
             // Role-based redirect
-            if (user.role === 'STAFF' || user.role === 'ADMIN') {
+            if (user.role === 'ADMIN') {
+                navigate('/admin');
+            } else if (user.role === 'STAFF') {
                 navigate('/staff');
             } else {
                 navigate('/');
