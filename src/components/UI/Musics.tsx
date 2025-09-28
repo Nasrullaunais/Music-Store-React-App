@@ -22,7 +22,34 @@ const MusicPage: React.FC<MusicsProps> = ({ searchQuery = '' }) => {
                 setLoading(true);
                 // Pass search query to API if it exists
                 const fetchedTracks = await fetchAllMusic(0, 100, searchQuery || undefined);
-                setTracks(fetchedTracks);
+
+                // If a searchQuery was provided and backend returned a full list (or ignored the param),
+                // perform a client-side filter to ensure correct search behavior.
+                if (searchQuery && fetchedTracks?.content) {
+                    const term = searchQuery.trim().toLowerCase();
+                    const filtered = fetchedTracks.content.filter((m) => {
+                        const name = (m.name || m.title || '').toString().toLowerCase();
+                        const artist = (m.artist || '').toString().toLowerCase();
+                        const genre = (m.genre || '').toString().toLowerCase();
+                        return (
+                            name.includes(term) ||
+                            artist.includes(term) ||
+                            genre.includes(term)
+                        );
+                    });
+
+                    // Keep pagination metadata but replace content with filtered results
+                    const paginatedFiltered: PaginatedResponse<Music> = {
+                        ...fetchedTracks,
+                        content: filtered,
+                        totalElements: filtered.length,
+                        totalPages: Math.ceil(filtered.length / (fetchedTracks.size || filtered.length || 1)),
+                    };
+                    setTracks(paginatedFiltered);
+                } else {
+                    setTracks(fetchedTracks);
+                }
+
                 setError(null);
             } catch (err: any) {
                 setError("Failed to fetch tracks. Please try again later.");

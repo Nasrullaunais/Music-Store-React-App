@@ -1,7 +1,7 @@
 import { Input, Card, CardBody, Spinner } from "@heroui/react";
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { searchMusic } from "@/api/music.ts";
+import { useNavigate, useLocation } from "react-router-dom";
+import { fetchAllMusic, searchMusic } from "@/api/music";
 import { Music } from "@/types";
 import { FiMusic, FiUser } from "react-icons/fi";
 
@@ -42,6 +42,18 @@ export default function SearchBar() {
     const [showResults, setShowResults] = useState(false);
     const searchRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        // Keep the input in sync with the URL `search` param so the clear button appears
+        const params = new URLSearchParams(location.search);
+        const q = params.get('search') || '';
+        setSearchTerm(q);
+        if (!q) {
+            setSearchResults([]);
+            setShowResults(false);
+        }
+    }, [location.search]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -56,15 +68,68 @@ export default function SearchBar() {
 
     useEffect(() => {
         const delayedSearch = setTimeout(async () => {
-            if (searchTerm.trim().length > 2) {
+            const termRaw = searchTerm.trim();
+            const term = termRaw.toLowerCase();
+            if (term.length > 2) {
                 setIsSearching(true);
                 try {
-                    const results = await searchMusic(searchTerm);
-                    setSearchResults(results);
-                    setShowResults(true);
+                    // First try the dedicated search endpoint
+                    const results = await searchMusic(termRaw);
+                    console.debug('[SearchBar] searchMusic returned', Array.isArray(results) ? `array:${results.length}` : typeof results, results);
+
+                    // Normalize server result: support both array response and paginated { content: [] }
+                    const serverItems: Music[] = Array.isArray(results)
+                        ? results
+                        : (results && Array.isArray((results as any).content) ? (results as any).content : []);
+
+                    // Always filter server results client-side to avoid backend returning everything
+                    const filteredFromSearch = (serverItems).filter((m) => {
+                        const name = (m.name || m.title || '').toString().toLowerCase();
+                        const artist = (m.artist || '').toString().toLowerCase();
+                        const genre = (m.genre || '').toString().toLowerCase();
+                        return name.includes(term) || artist.includes(term) || genre.includes(term);
+                    });
+
+                    console.debug('[SearchBar] filteredFromSearch length', filteredFromSearch.length);
+
+                    if (filteredFromSearch.length > 0) {
+                        setSearchResults(filteredFromSearch);
+                        setShowResults(true);
+                    } else {
+                        console.debug('[SearchBar] searchMusic gave no matches; falling back to fetchAllMusic');
+                        // Fallback: try fetchAllMusic and then filter (covers backends that ignore the search endpoint)
+                        const paginated = await fetchAllMusic(0, 50, undefined);
+                        const items = Array.isArray(paginated?.content) ? paginated.content : [];
+                        const filtered = items.filter((m) => {
+                            const name = (m.name || m.title || '').toString().toLowerCase();
+                            const artist = (m.artist || '').toString().toLowerCase();
+                            const genre = (m.genre || '').toString().toLowerCase();
+                            return name.includes(term) || artist.includes(term) || genre.includes(term);
+                        });
+                        console.debug('[SearchBar] fallback filtered length', filtered.length);
+                        setSearchResults(filtered);
+                        setShowResults(true);
+                    }
                 } catch (error) {
-                    console.error('Search error:', error);
-                    setSearchResults([]);
+                    console.error('Search error (searchMusic):', error);
+                    try {
+                        // Final fallback: fetch all and filter client-side
+                        const paginated = await fetchAllMusic(0, 50, undefined);
+                        const items = Array.isArray(paginated?.content) ? paginated.content : [];
+                        const filtered = items.filter((m) => {
+                            const name = (m.name || m.title || '').toString().toLowerCase();
+                            const artist = (m.artist || '').toString().toLowerCase();
+                            const genre = (m.genre || '').toString().toLowerCase();
+                            return name.includes(term) || artist.includes(term) || genre.includes(term);
+                        });
+                        console.debug('[SearchBar] final fallback filtered length', filtered.length);
+                        setSearchResults(filtered);
+                        setShowResults(true);
+                    } catch (err2) {
+                        console.error('Search fallback error:', err2);
+                        setSearchResults([]);
+                        setShowResults(false);
+                    }
                 } finally {
                     setIsSearching(false);
                 }
@@ -80,14 +145,20 @@ export default function SearchBar() {
     const handleResultClick = (music: Music) => {
         setShowResults(false);
         setSearchTerm("");
-        // Navigate to home with search filter - use music.name instead of music.title
-        navigate(`/?search=${encodeURIComponent(music.name || music.title || '')}`);
+        // Navigate to current path with search filter using the track name
+        const params = new URLSearchParams(location.search);
+        params.set('search', (music.name || music.title || '').toString());
+        const searchString = params.toString();
+        navigate(`${location.pathname}${searchString ? `?${searchString}` : ''}`);
     };
 
     const handleSearchSubmit = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && searchTerm.trim()) {
             setShowResults(false);
-            navigate(`/?search=${encodeURIComponent(searchTerm)}`);
+            const params = new URLSearchParams(location.search);
+            params.set('search', searchTerm.trim());
+            const searchString = params.toString();
+            navigate(`${location.pathname}${searchString ? `?${searchString}` : ''}`);
         }
     };
 
@@ -102,6 +173,11 @@ export default function SearchBar() {
                     setSearchTerm("");
                     setSearchResults([]);
                     setShowResults(false);
+                    // Remove only the `search` query param and stay on the same pathname
+                    const params = new URLSearchParams(location.search);
+                    params.delete('search');
+                    const searchString = params.toString();
+                    navigate(`${location.pathname}${searchString ? `?${searchString}` : ''}`, { replace: true });
                 }}
                 classNames={{
                     input: [
@@ -150,7 +226,7 @@ export default function SearchBar() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-medium text-sm truncate text-indigo-950 dark:text-indigo-50">
-                                        {music.title}
+                                        {music.name || music.title}
                                     </p>
                                     <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
                                         <FiUser size={12} />

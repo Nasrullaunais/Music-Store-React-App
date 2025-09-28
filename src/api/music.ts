@@ -56,8 +56,17 @@ export const fetchbyGenre = async (genre: string): Promise<Music[]> => {
 
 export const searchMusic = async (search: string): Promise<Music[]> => {
     try{
-        const response = await api.get(API_ENDPOINTS.MUSIC.SEARCH, { params: { search } });
-        return response.data;
+        // Use the GET_ALL endpoint with the `search` query param for broader compatibility.
+        const response = await api.get(API_ENDPOINTS.MUSIC.GET_ALL, { params: { search } });
+        // Normalize: backend may return a paginated object or an array
+        if (response.data && Array.isArray(response.data)) {
+            return response.data as Music[];
+        }
+        if (response.data && Array.isArray(response.data.content)) {
+            return response.data.content as Music[];
+        }
+        // Fallback: if response shape is unexpected, return empty array
+        return [];
     } catch (error: any) {
         throw new Error(error.response?.data?.message || 'Failed to search music');
     }

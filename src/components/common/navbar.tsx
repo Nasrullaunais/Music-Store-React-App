@@ -114,11 +114,11 @@ export const Navbar = () => {
       position="sticky"
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="fixed top-2 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-1rem)] lg:w-[calc(100%-2rem)] max-w-7xl rounded-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-indigo-200/50 dark:border-indigo-800/50 shadow-lg"
+      className="fixed top-0 mt-3 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-1rem)] lg:w-[calc(100%-2rem)] max-w-7xl rounded-xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-indigo-200/50 dark:border-indigo-800/50 shadow"
       classNames={{
-        wrapper: "px-4 sm:px-6",
+        wrapper: "px-3 sm:px-4",
         brand: "flex-grow-0",
-        content: "gap-4",
+        content: "gap-3",
       }}
     >
       {/* Mobile Menu Toggle */}
@@ -130,13 +130,13 @@ export const Navbar = () => {
       </NavbarContent>
 
       {/* Brand */}
-      <NavbarBrand className="flex-grow-0 mr-4">
+      <NavbarBrand className="flex-grow mr-6">
         <div
           className="flex justify-start items-center gap-2 cursor-pointer"
           onClick={() => handleNavigation('/')}
         >
-          <img alt="logo" className="h-8 w-8" src="/logo-dark.svg" />
-          <p className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <img alt="logo" className="h-7 w-7" src="/logo-dark.svg" />
+          <p className="font-bold text-base bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             MUSIC LANE
           </p>
         </div>
@@ -172,21 +172,21 @@ export const Navbar = () => {
 
         {/* Cart (for customers only) */}
         {isAuthenticated && user?.role === 'CUSTOMER' && (
-          <NavbarItem>
+          <NavbarItem className="overflow-visible">
             <Button
               onPress={handleCartClick}
               variant="light"
               isIconOnly
-              className="relative text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
-              size="md"
+              className="relative overflow-visible text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors p-0.5"
+              size="sm"
             >
-              <FiShoppingCart size={20} />
+              <FiShoppingCart size={16} />
               {itemCount > 0 && (
                 <Chip
                   size="sm"
                   color="danger"
                   variant="solid"
-                  className="absolute -top-1 -right-1 min-w-5 h-5 text-xs animate-pulse"
+                  className="absolute -top-0.5 -right-0.5 min-w-5 h-4 text-[10px] flex items-center justify-center rounded-full px-1"
                 >
                   {itemCount > 99 ? '99+' : itemCount}
                 </Chip>
@@ -217,6 +217,7 @@ export const Navbar = () => {
                   key="profile"
                   startContent={<FiUser size={16} />}
                   className="text-indigo-950 dark:text-indigo-50"
+                  textValue={`${user?.username ?? 'User'} ${user?.role ?? ''}`}
                 >
                   <div>
                     <p className="font-semibold">{user?.username}</p>
