@@ -106,9 +106,7 @@ export interface ReviewStats {
 // Cart types
 export interface CartItem {
     id: number;
-    musicId: number;
-    musicTitle: string;
-    musicArtist: string;
+    music: Music;
     price: number;
     quantity: number;
 }

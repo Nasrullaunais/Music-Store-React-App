@@ -4,6 +4,7 @@ import { FiShoppingCart, FiCheck } from 'react-icons/fi';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import {toast} from "react-toastify";
 
 interface AddToCartButtonProps {
     itemId: number;
@@ -17,12 +18,13 @@ interface AddToCartButtonProps {
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({
     itemId
 }) => {
-    const { addToCart, isInCart } = useCart();
+    const { addToCart, isInCart, isMyMusic} = useCart();
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [isAdding, setIsAdding] = useState(false);
 
     const inCart = isInCart(itemId);
+    const myMusic = isMyMusic(itemId);
 
     const handleAddToCart = async () => {
         if (inCart) return;
@@ -30,6 +32,11 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
         // Check if user is authenticated
         if (!isAuthenticated) {
             navigate('/auth');
+            return;
+        }
+
+        if (myMusic) {
+            toast.info("You cannot add your own music to the cart.");
             return;
         }
 
@@ -59,14 +66,20 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
             }
             className={`
                 min-w-fit px-3 py-2 text-xs font-medium transition-all duration-200
-                ${inCart 
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' 
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                ${myMusic
+                    ? 'bg-purple-100 text-purple-700 dark:bg-indigo-900/50  dark:text-indigo-200' 
+                    : 'bg-primary hover:bg-primary text-white'
                 }
+                ${inCart
+            ? 'bg-success hover:bg-success text-black dark:bg-success dark:text-white dark:hover:bg-success/20'
+            : 'bg-primary hover:bg-primary text-white'}
                 ${isAdding ? 'opacity-75' : ''}
+                ${inCart ? 'cursor-not-allowed ' : ''}
+                ${myMusic ? 'cursor-not-allowed opacity-75' : ''}
+               
             `}
         >
-            {isAdding ? 'Adding...' : inCart ? 'In Cart' : 'Add to Cart'}
+            {inCart ? 'In Cart' : myMusic ? 'Owned' : isAdding ? 'Adding...' : 'Add to Cart'}
         </Button>
     );
 };

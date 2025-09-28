@@ -52,6 +52,13 @@ export const Navbar = () => {
                     My Music
                 </p>
             </NavbarItem>
+            {AuthContext.user?.role === 'ARTIST' && (
+                <NavbarItem>
+                    <p className="text-md text-gray-800 font-bold" onClick={() => navigate('/artist')} style={{cursor: 'pointer'}}>
+                        Artist Dashboard
+                    </p>
+                </NavbarItem>
+            )}
             {(AuthContext.user?.role === 'STAFF' || AuthContext.user?.role === 'ADMIN') && (
                 <NavbarItem>
                     <p className="text-md text-gray-800 font-bold" onClick={() => navigate('/staff')} style={{cursor: 'pointer'}}>
@@ -73,27 +80,30 @@ export const Navbar = () => {
             <NavbarItem>
                 <SearchBar></SearchBar>
             </NavbarItem>
-            <NavbarItem>
-                <Button
-                    onPress={handleCartClick}
-                    variant="light"
-                    className="relative text-indigo-950 hover:bg-indigo-100 hover:text-indigo-950 dark:hover:bg-indigo-900 dark:hover:text-indigo-50 rounded-lg"
-                    size="md"
-                    startContent={<FiShoppingCart size={20} />}
-                >
-                    Cart
-                    {itemCount > 0 && (
-                        <Chip
-                            size="sm"
-                            color="danger"
-                            variant="solid"
-                            className="absolute -top-1 -right-1 min-w-5 h-5 text-xs"
-                        >
-                            {itemCount}
-                        </Chip>
-                    )}
-                </Button>
-            </NavbarItem>
+            {/* Only show cart for customers - artists don't have cart functionality */}
+            {AuthContext.user?.role === 'CUSTOMER' && (
+              <NavbarItem>
+                  <Button
+                      onPress={handleCartClick}
+                      variant="light"
+                      className="relative text-indigo-950 hover:bg-indigo-100 hover:text-indigo-950 dark:hover:bg-indigo-900 dark:hover:text-indigo-50 rounded-lg"
+                      size="md"
+                      startContent={<FiShoppingCart size={20} />}
+                  >
+                      Cart
+                      {itemCount > 0 && (
+                          <Chip
+                              size="sm"
+                              color="danger"
+                              variant="solid"
+                              className="absolute -top-1 -right-1 min-w-5 h-5 text-xs"
+                          >
+                              {itemCount}
+                          </Chip>
+                      )}
+                  </Button>
+              </NavbarItem>
+            )}
               <NavbarItem>
                   <Button
                       color="primary"

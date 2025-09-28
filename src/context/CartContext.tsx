@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Cart } from '@/types';
+import {Cart, Music} from '@/types';
 import { cartApi } from '@/api/cart';
+import {fetchMyPurchasedMusic} from "@/api/myMusic.ts";
 import { toast } from 'react-toastify';
 import { useAuth } from './AuthContext';
 
@@ -13,6 +14,7 @@ interface CartContextType {
     clearCart: () => Promise<void>;
     refreshCart: () => Promise<void>;
     isInCart: (musicId: number) => boolean;
+    isMyMusic: (musicId: number) => boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -32,11 +34,12 @@ interface CartProviderProps {
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const [cart, setCart] = useState<Cart | null>(null);
     const [loading, setLoading] = useState(false);
+    const [myMusic, setMyMusic] = useState<Music[]>([]);
     const { user } = useAuth();
 
     const refreshCart = async () => {
-        // Only load cart for customers
-        if (!user || (user.role !== 'CUSTOMER' && user.role !== 'ARTIST')) {
+        // Only load cart for customers - artists don't have carts
+        if (!user || user.role !== 'CUSTOMER') {
             setCart(null);
             return;
         }
@@ -88,7 +91,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const clearCart = async () => {
         try {
             await cartApi.clearCart();
-            setCart(cart ? { ...cart, items: [], total: 0 } : null);
+            setCart(cart ? { ...cart, items: [], totalPrice: 0 } : null);
             toast.success('Cart cleared successfully');
         } catch (error: any) {
             console.error('Error clearing cart:', error);
@@ -102,15 +105,36 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         return cart.items.some(item => item.music.id === musicId);
     };
 
+    const isMyMusic = (musicId: number): boolean => {
+        if (!myMusic) return false;
+        return myMusic.some(item => item.id === musicId);
+    }
+
     const itemCount = cart?.items.length || 0;
 
-    // Load cart when user changes and is a customer/artist
+    // Load cart when user changes and is a customer
     useEffect(() => {
-        if (user && (user.role === 'CUSTOMER' || user.role === 'ARTIST')) {
+        if (user && user.role === 'CUSTOMER') {
             refreshCart();
         } else {
             setCart(null);
         }
+    }, [user]);
+
+    useEffect(() => {
+        const loadMyMusic = async () => {
+            if (user && user.role === 'CUSTOMER') {
+                try {
+                    const music = await fetchMyPurchasedMusic();
+                    setMyMusic(music);
+                } catch (error) {
+                    console.error('Error fetching purchased music:', error);
+                }
+            } else {
+                setMyMusic([]);
+            }
+        };
+        loadMyMusic();
     }, [user]);
 
     const value: CartContextType = {
@@ -122,6 +146,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         clearCart,
         refreshCart,
         isInCart,
+        isMyMusic,
     };
 
     return (

@@ -22,6 +22,8 @@ const AuthPage = () => {
                 navigate('/admin');
             } else if (user.role === 'STAFF') {
                 navigate('/staff');
+            } else if (user.role === 'ARTIST') {
+                navigate('/artist');
             } else {
                 navigate('/');
             }
@@ -41,6 +43,8 @@ const AuthPage = () => {
                 navigate('/admin');
             } else if (user.role === 'STAFF') {
                 navigate('/staff');
+            } else if (user.role === 'ARTIST') {
+                navigate('/artist');
             } else {
                 navigate('/');
             }

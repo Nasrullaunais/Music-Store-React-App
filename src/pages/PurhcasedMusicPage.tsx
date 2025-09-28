@@ -105,11 +105,11 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                                 {music.artist}
                             </p>
                             {/* Display rating if available */}
-                            {music.averageRating && music.reviewCount && (
+                            {music.averageRating && music.totalReviews > 0 && (
                                 <div className="flex items-center gap-1 mt-1">
                                     <FiStar size={14} className="text-yellow-400 fill-current" />
                                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                                        {music.averageRating.toFixed(1)} ({music.reviewCount} reviews)
+                                        {music.averageRating.toFixed(1)} ({music.totalReviews} reviews)
                                     </span>
                                 </div>
                             )}

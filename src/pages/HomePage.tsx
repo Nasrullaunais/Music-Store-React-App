@@ -5,7 +5,7 @@ function HomePage() {
 
 
     return(
-        <div className={"flex h-auto flex-col mt-17 items-center justify-center min-h-screen"}>
+        <div className={" mt-17 w-full h-full flex justify-center items-center"}>
             <Musics></Musics>
         </div>
     )

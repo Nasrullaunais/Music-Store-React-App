@@ -9,6 +9,7 @@ import CartPage from "@/pages/CartPage.tsx";
 import SupportPage from "@/pages/SupportPage.tsx";
 import StaffDashboard from "@/pages/StaffDashboard.tsx";
 import AdminDashboard from "@/pages/AdminDashboard.tsx";
+import ArtistDashboard from "@/pages/ArtistDashboard.tsx";
 import { Navbar } from "./components/common/navbar.tsx";
 import {PurchasedMusic} from "@/pages/PurhcasedMusicPage.tsx";
 import ProtectedRoute from "./components/common/ProtectedRoutes.tsx";
@@ -36,6 +37,14 @@ function App() {
                 </ProtectedRoute>
               }
               path="/support"
+            />
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['ARTIST']}>
+                  <ArtistDashboard />
+                </ProtectedRoute>
+              }
+              path="/artist"
             />
             <Route
               element={

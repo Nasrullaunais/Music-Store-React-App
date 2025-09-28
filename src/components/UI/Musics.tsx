@@ -43,12 +43,12 @@ const MusicPage = () => {
 
 
     return (
-        <div className="container mx-auto p-4 w-full">
+        <div className="container mt-5 w-full">
             {/*<div className="flex flex-col md:flex-row items-center justify-between mb-8">*/}
             {/*    <h1 className="text-4xl font-bold mb-8 text-left ml-4">All Music Tracks</h1>*/}
             {/*    <SearchBar />*/}
             {/*</div>*/}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5">
                 {tracks?.content.map((track: Music) => (
                     <Card isBlurred={true} key={track.id} className="bg-opacity-90 w-full brightness-110 py-4 hover:shadow-lg rounded-xl  hover:scale-105 transition-transform duration-300">
                         <CardHeader className="pb-0 pt-2 px-4 flex-col justify-between items-start">
