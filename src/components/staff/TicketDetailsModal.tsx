@@ -74,9 +74,15 @@ const TicketDetailsModal = ({ ticket, isOpen, onClose, onUpdate }: TicketDetails
 
     setSending(true);
     try {
-      await staffTicketAPI.replyToTicket(ticket.id, newMessage);
+      const sentMessage = await staffTicketAPI.replyToTicket(ticket.id, newMessage);
       setNewMessage('');
-      await loadMessages(); // Reload messages to show the new one
+
+      // Add the new message immediately to provide instant feedback
+      setMessages(prevMessages => [...prevMessages, sentMessage]);
+
+      // Reload messages to ensure we have the complete conversation
+      await loadMessages();
+
       toast.success('Message sent successfully');
     } catch (error: any) {
       console.error('Failed to send message - Full error details:', {

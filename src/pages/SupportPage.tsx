@@ -3,13 +3,15 @@ import { Button, Card, CardBody, CardHeader, Input, Textarea, Modal, ModalConten
 import { FiPlus, FiSend, FiMessageCircle, FiClock, FiUser, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { ticketAPI } from '../api/tickets';
-import { Ticket } from '@/types';
+import { Ticket, TicketMessage } from '@/types';
 
 const SupportPage: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const [createTicketForm, setCreateTicketForm] = useState({ subject: '', description: '' });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -19,10 +21,19 @@ const SupportPage: React.FC = () => {
     loadTickets();
   }, []);
 
+  // Load messages when ticket is selected
+  useEffect(() => {
+    if (selectedTicket) {
+      loadTicketMessages(selectedTicket.id);
+    } else {
+      setMessages([]);
+    }
+  }, [selectedTicket]);
+
   // Auto-scroll to bottom of messages
   useEffect(() => {
     scrollToBottom();
-  }, [selectedTicket?.messages]);
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -32,12 +43,28 @@ const SupportPage: React.FC = () => {
     try {
       setLoading(true);
       const ticketsData = await ticketAPI.getCustomerTickets();
+      console.log('Loaded tickets:', ticketsData);
       setTickets(ticketsData);
     } catch (error) {
       toast.error('Failed to load tickets');
       console.error('Error loading tickets:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadTicketMessages = async (ticketId: number) => {
+    try {
+      setLoadingMessages(true);
+      const ticketMessages = await ticketAPI.getTicketMessages(ticketId);
+      console.log('Loaded messages for ticket', ticketId, ':', ticketMessages);
+      setMessages(ticketMessages || []);
+    } catch (error) {
+      toast.error('Failed to load ticket messages');
+      console.error('Error loading messages:', error);
+      setMessages([]);
+    } finally {
+      setLoadingMessages(false);
     }
   };
 
@@ -75,20 +102,21 @@ const SupportPage: React.FC = () => {
       setLoading(true);
       const message = await ticketAPI.addMessageToTicket(selectedTicket.id, { content: newMessage });
 
-      // Update the selected ticket with the new message
-      const updatedTicket = {
-        ...selectedTicket,
-        messages: [...(selectedTicket.messages || []), message]
-      };
-      setSelectedTicket(updatedTicket);
+      // Add the new message to the messages state
+      setMessages(prevMessages => [...prevMessages, message]);
 
-      // Update the ticket in the tickets list
+      // Update the ticket in the tickets list to show the latest message
       setTickets(tickets.map(ticket =>
-        ticket.id === selectedTicket.id ? updatedTicket : ticket
+        ticket.id === selectedTicket.id
+          ? { ...ticket, messages: [...(ticket.messages || []), message] }
+          : ticket
       ));
 
       setNewMessage('');
       toast.success('Message sent!');
+
+      // Reload messages to ensure we have the latest state
+      await loadTicketMessages(selectedTicket.id);
     } catch (error) {
       toast.error('Failed to send message');
       console.error('Error sending message:', error);
@@ -214,10 +242,10 @@ const SupportPage: React.FC = () => {
                         <span>Ticket #{selectedTicket.id}</span>
                         <span>•</span>
                         <span>Created {formatDate(selectedTicket.createdAt)}</span>
-                        {selectedTicket.assignedStaff && (
+                        {(selectedTicket.staff || selectedTicket.assignedStaffName) && (
                           <>
                             <span>•</span>
-                            <span>Assigned to {selectedTicket.assignedStaff.username}</span>
+                            <span>Assigned to {selectedTicket.staff?.username || selectedTicket.assignedStaffName}</span>
                           </>
                         )}
                       </div>
@@ -235,37 +263,54 @@ const SupportPage: React.FC = () => {
                 {/* Messages */}
                 <CardBody className="flex-1 p-0 overflow-hidden">
                   <ScrollShadow className="h-full p-4">
-                    <div className="space-y-4">
-                      {(selectedTicket.messages || []).map((message) => (
-                        <div
-                          key={message.id}
-                          className={`flex ${message.isFromStaff ? 'justify-start' : 'justify-end'}`}
-                        >
-                          <div
-                            className={`max-w-[70%] rounded-lg p-3 ${
-                              message.isFromStaff
-                                ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
-                                : 'bg-indigo-600 text-white'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2 mb-1">
-                              <FiUser size={14} />
-                              <span className="text-xs font-medium">
-                                {message.isFromStaff
-                                  ? message.staff?.username || 'Staff'
-                                  : message.customer?.username || 'You'
-                                }
-                              </span>
-                              <span className="text-xs opacity-70">
-                                {formatDate(message.timestamp)}
-                              </span>
-                            </div>
-                            <p className="text-sm">{message.content}</p>
-                          </div>
+                    {loadingMessages ? (
+                      <div className="flex justify-center items-center h-full">
+                        <div className="text-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
+                          <p className="text-sm text-gray-500">Loading messages...</p>
                         </div>
-                      ))}
-                      <div ref={messagesEndRef} />
-                    </div>
+                      </div>
+                    ) : messages.length === 0 ? (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-gray-500">
+                          <FiMessageCircle size={48} className="mx-auto mb-4 opacity-50" />
+                          <p>No messages yet</p>
+                          <p className="text-sm">Start the conversation by sending a message</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {messages.map((message) => (
+                          <div
+                            key={message.id}
+                            className={`flex ${message.isFromStaff ? 'justify-start' : 'justify-end'}`}
+                          >
+                            <div
+                              className={`max-w-[70%] rounded-lg p-3 ${
+                                message.isFromStaff
+                                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                                  : 'bg-indigo-600 text-white'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <FiUser size={14} />
+                                <span className="text-xs font-medium">
+                                  {message.isFromStaff
+                                    ? message.staff?.username || 'Staff'
+                                    : message.customer?.username || 'You'
+                                  }
+                                </span>
+                                <span className="text-xs opacity-70">
+                                  {formatDate(message.timestamp)}
+                                </span>
+                              </div>
+                              <p className="text-sm">{message.content}</p>
+                            </div>
+                          </div>
+                        ))}
+                        <div ref={messagesEndRef} />
+                      </div>
+                    )}
                   </ScrollShadow>
                 </CardBody>
 
