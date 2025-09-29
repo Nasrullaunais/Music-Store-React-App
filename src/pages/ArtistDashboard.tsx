@@ -7,12 +7,10 @@ import {
   Tabs,
   Tab,
   Spinner,
-  Chip,
-  Button
+  Chip
 } from '@heroui/react';
 import {
   FiMusic,
-  FiBarChart,
   FiStar,
   FiUpload,
   FiTrendingUp,
@@ -136,8 +134,8 @@ const ArtistDashboard = () => {
       <Card>
         <CardBody>
           <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
+            selectedKey={activeTab}
+            onSelectionChange={(key) => setActiveTab(key as string)}
             variant="underlined"
             color="primary"
             className="w-full"

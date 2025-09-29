@@ -535,7 +535,7 @@ public class MusicService {
 
             // In a real implementation, you would save files to disk/cloud and get URLs
             music.setAudioFilePath("/uploads/music/" + audioFileName);
-            music.setImageUrl("/uploads/covers/" + imageFileName);
+            music.setImageUrl(imageFileName);
             music.setOriginalFileName(musicFile.getOriginalFilename());
 
             Music savedMusic = saveMusic(music);

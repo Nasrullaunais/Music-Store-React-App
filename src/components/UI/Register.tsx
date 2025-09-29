@@ -3,10 +3,10 @@
 import React, {useState} from "react";
 import {Button, Input, Link as NextLink, Checkbox} from "@heroui/react";
 import {Icon} from "@iconify/react";
-import {RegistrationData} from "@/types";
+import {RegisterData} from "@/types";
 
 interface RegisterProps {
-    onRegister: (userData: RegistrationData) => void;
+    onRegister: (userData: RegisterData) => void;
     onSwitchToLogin: () => void;
 }
 

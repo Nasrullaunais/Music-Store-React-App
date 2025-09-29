@@ -14,9 +14,11 @@ import {
 import AudioPlayer from "@/components/common/MusicPlayer.tsx";
 import MusicReviews from "@/components/UI/MusicReviews.tsx";
 import {PlayIcon, PauseIcon, MoreVerticalIcon, PlusIcon, PlaylistIcon} from "@/components/icons.tsx";
+import {TbDownload} from 'react-icons/tb';
 import {Tabs, Tab, Card, CardBody, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Textarea} from "@heroui/react";
 import {FiStar, FiMessageSquare} from 'react-icons/fi';
 import {toast} from "react-toastify";
+
 
 // Helper function to check if music is in playlist
 const isMusicInPlaylist = (playlist: Playlist, musicId: number): boolean => {
@@ -38,6 +40,7 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
     const [newPlaylistName, setNewPlaylistName] = useState('');
     const [newPlaylistDescription, setNewPlaylistDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
     const isCurrentlyPlaying = currentMusic?.id === music.id;
 
     const handleCreatePlaylist = async () => {
@@ -59,6 +62,65 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
             setIsLoading(false);
         }
     };
+
+    const handleDownload = async () => {
+        try {
+            setIsDownloading(true);
+            const token = localStorage.getItem('token'); // or wherever you keep it
+            const downloadUrl = `http://localhost:8082/api/customer/download/${music.id}`; // if using Vite proxy
+            // or if not proxied: const downloadUrl = 'http://localhost:8082/api/customer/download/' + music.id;
+
+            // Optional HEAD check (with token)
+            const headRes = await fetch(downloadUrl, {
+                method: 'HEAD',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (headRes.status === 403) {
+                toast.error("You haven't purchased this track or don't have permission to download it.");
+                return;
+            }
+            if (headRes.status === 404) {
+                toast.error('Requested music or audio file was not found.');
+                return;
+            }
+            if (!headRes.ok) {
+                const t = await headRes.text();
+                toast.error(t || 'Failed to initiate download.');
+                return;
+            }
+
+            // GET the file with Authorization header
+            const res = await fetch(downloadUrl, {
+                method: 'GET',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!res.ok) {
+                const txt = await res.text();
+                toast.error(txt || `Download failed: ${res.status}`);
+                return;
+            }
+
+            const blob = await res.blob();
+            const hintFilename = ( music.name || `music-${music.id}`) + '.mp3';
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = hintFilename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            toast.success('Download started');
+        } catch (err) {
+            console.error('Download error', err);
+            toast.error('Download failed');
+        } finally {
+            setIsDownloading(false);
+        }
+    };
+
+
 
     const handleAddToExistingPlaylist = async (playlistId: number) => {
         try {
@@ -132,7 +194,9 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                             <DropdownMenu
                                 aria-label="Music actions"
                                 onAction={(key) => {
-                                    if (key === "create") {
+                                    if (key === "download") {
+                                        handleDownload();
+                                    } else if (key === "create") {
                                         setIsModalOpen(true);
                                     } else if (key === "review") {
                                         setIsReviewModalOpen(true);
@@ -150,6 +214,7 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                                     }
                                 }}
                                 items={[
+                                    { key: "download", label: isDownloading ? 'Downloading...' : 'Download', icon: <TbDownload size={16} /> },
                                     { key: "review", label: "Reviews & Ratings", icon: <FiMessageSquare size={16} /> },
                                     { key: "create", label: "Create new playlist", icon: <PlusIcon size={16} /> },
                                     ...allPlaylists.map((playlist) => {

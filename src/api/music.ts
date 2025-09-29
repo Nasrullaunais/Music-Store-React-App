@@ -71,3 +71,21 @@ export const searchMusic = async (search: string): Promise<Music[]> => {
         throw new Error(error.response?.data?.message || 'Failed to search music');
     }
 };
+
+export const downloadMusic = async (id: number): Promise<void> => {
+    try {
+        const response = await api.get(API_ENDPOINTS.MUSIC.DOWNLOAD(id), {
+            responseType: 'blob'
+        });
+        // Create a link to download the file
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `music_${id}.mp3`); // or extract filename from response headers if available
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || 'Failed to download music');
+    }
+}

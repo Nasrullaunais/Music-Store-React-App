@@ -13,6 +13,7 @@ interface CartContextType {
     removeFromCart: (itemId: number) => Promise<void>;
     clearCart: () => Promise<void>;
     refreshCart: () => Promise<void>;
+    checkout: () => Promise<void>;
     isInCart: (musicId: number) => boolean;
     isMyMusic: (musicId: number) => boolean;
 }
@@ -100,6 +101,27 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         }
     };
 
+    const checkout = async () => {
+        if (!cart || cart.items.length === 0) {
+            toast.warning('Your cart is empty');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            await cartApi.checkout();
+            toast.success('Purchase completed successfully!');
+            // Refresh to get updated cart state (likely empty)
+            await refreshCart();
+        } catch (error: any) {
+            console.error('Error during checkout:', error);
+            toast.error('Checkout failed. Please try again.');
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const isInCart = (musicId: number): boolean => {
         if (!cart) return false;
         return cart.items.some(item => item.music.id === musicId);
@@ -145,6 +167,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         removeFromCart,
         clearCart,
         refreshCart,
+        checkout,
         isInCart,
         isMyMusic,
     };

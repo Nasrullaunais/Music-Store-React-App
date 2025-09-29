@@ -3,10 +3,9 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { CartItem } from '@/types';
 import { useCart } from '@/context/CartContext';
-import { cartApi } from '@/api/cart';
 
 const CartPage: React.FC = () => {
-    const { cart, loading, removeFromCart, clearCart, refreshCart } = useCart();
+    const { cart, loading, removeFromCart, clearCart, refreshCart, checkout } = useCart();
     const [processingCheckout, setProcessingCheckout] = useState(false);
     const [removingItems, setRemovingItems] = useState<Set<number>>(new Set());
     const navigate = useNavigate();
@@ -53,14 +52,10 @@ const CartPage: React.FC = () => {
 
         try {
             setProcessingCheckout(true);
-            await cartApi.checkout();
-            toast.success('Purchase completed successfully!');
-            await refreshCart(); // Refresh to get updated cart state
-            // Optionally redirect to a success page or purchased music page
-            // navigate('/profile?tab=purchased');
+            await checkout();
+            // checkout() handles toasts and refresh
         } catch (error: any) {
             console.error('Error during checkout:', error);
-            toast.error('Checkout failed. Please try again.');
         } finally {
             setProcessingCheckout(false);
         }
@@ -150,7 +145,7 @@ const CartPage: React.FC = () => {
                                         {/* Music Cover */}
                                         <div className="flex-shrink-0">
                                             <img
-                                                src={item.music.imageUrl || '/placeholder-album.jpg'}
+                                                src={item.music.imageUrl || item.music.coverImage || '/placeholder-album.jpg'}
                                                 alt={item.music.name}
                                                 className="w-16 h-16 rounded-lg object-cover"
                                                 onError={(e) => {
@@ -187,7 +182,7 @@ const CartPage: React.FC = () => {
                                         {/* Price and Actions */}
                                         <div className="flex-shrink-0 text-right">
                                             <div className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                                {formatPrice(item.totalPrice)}
+                                                {formatPrice((item.price ?? item.music.price) * (item.quantity ?? 1))}
                                             </div>
                                             <button
                                                 onClick={() => handleRemoveItem(item.id)}
@@ -213,12 +208,12 @@ const CartPage: React.FC = () => {
                                 <div className="space-y-3 mb-6">
                                     <div className="flex justify-between text-gray-600 dark:text-gray-400">
                                         <span>Items ({cart.items.length})</span>
-                                        <span>{formatPrice(cart.total)}</span>
+                                        <span>{formatPrice(cart.totalPrice)}</span>
                                     </div>
                                     <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
                                         <div className="flex justify-between text-lg font-semibold text-gray-900 dark:text-white">
                                             <span>Total</span>
-                                            <span>{formatPrice(cart.total)}</span>
+                                            <span>{formatPrice(cart.totalPrice)}</span>
                                         </div>
                                     </div>
                                 </div>

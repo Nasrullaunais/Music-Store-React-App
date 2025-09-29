@@ -28,7 +28,7 @@ import { toast } from 'react-toastify';
 
 const SystemManagement = () => {
   const [systemStatus, setSystemStatus] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [shutdownDelay, setShutdownDelay] = useState('10');
   const [shutdownReason, setShutdownReason] = useState('');
 

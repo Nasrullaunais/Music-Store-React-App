@@ -33,6 +33,7 @@ export const API_ENDPOINTS = {
         FEATURED: '/api/music/featured',
         SEARCH: '/api/music/search',
         PURCHASED: '/api/customer/purchased',
+        DOWNLOAD: (musicId: number) => `/api/customer/download/${musicId}`,
     },
 
     // Cart Endpoints

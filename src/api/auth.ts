@@ -1,11 +1,11 @@
-import {LoginCredentials, RegistrationData, User} from "@/types";
+import {LoginCredentials, RegisterData, User} from "@/types";
 import api, { API_ENDPOINTS} from "@/services/api.ts";
 
 
 
 
 
-export const registerUser = async (userData: RegistrationData): Promise<User> => {
+export const registerUser = async (userData: RegisterData): Promise<User> => {
     try{
         const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, userData);
         const {token, user} = response.data;
