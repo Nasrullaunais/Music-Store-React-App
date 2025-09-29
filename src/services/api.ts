@@ -5,12 +5,13 @@ import axios from 'axios';
 export const API_BASE_URL ='http://localhost:8082';
 
 // Create axios instance with default configuration
+// NOTE: Do not set a global 'Content-Type' header here. When uploading FormData the browser
+// needs to set the multipart/form-data boundary automatically. Setting it globally can
+// prevent that and break file uploads.
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
     timeout: 10000,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+    // intentionally no default 'Content-Type' header
 });
 
 // API Endpoints according to API_Documentation.md

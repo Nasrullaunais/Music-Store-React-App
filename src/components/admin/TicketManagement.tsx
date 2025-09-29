@@ -53,10 +53,26 @@ const TicketManagement = () => {
     setLoading(true);
     try {
       const filterValue = statusFilter === 'all' ? undefined : statusFilter || undefined;
-      const response = await adminAPI.getAllTickets(page - 1, 10, filterValue);
-      setTickets(response.content || []);
-      const totalElements = response.totalElements || 0;
-      setTotalPages(Math.max(1, Math.ceil(totalElements / 10)));
+      const response = await adminAPI.getAllTickets(filterValue);
+      console.log('Tickets:', response);
+
+      // Response may be either an array of tickets or an object like { content: AdminTicket[], totalElements: number }
+      const resAny: any = response;
+      let ticketsData: AdminTicket[] = [];
+      let totalElements = 0;
+
+      if (Array.isArray(resAny)) {
+        ticketsData = resAny;
+        totalElements = ticketsData.length;
+      } else if (resAny && typeof resAny === 'object') {
+        ticketsData = resAny.content || [];
+        totalElements = typeof resAny.totalElements === 'number' ? resAny.totalElements : ticketsData.length;
+      }
+
+      setTickets(ticketsData);
+      // If backend provides totalElements, try to compute total pages assuming a default page size (10).
+      const pageSize = 10;
+      setTotalPages(Math.max(1, Math.ceil(totalElements / pageSize)));
     } catch (error) {
       toast.error('Failed to load tickets');
       console.error('Tickets loading error:', error);
@@ -120,14 +136,32 @@ const TicketManagement = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '-';
+    try {
+      const d = new Date(dateString);
+      if (Number.isNaN(d.getTime())) return dateString;
+      return d.toLocaleDateString();
+    } catch {
+      return dateString;
+    }
   };
 
   if (loading && tickets.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
         <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  // Show friendly empty state when not loading and there are no tickets
+  if (!loading && tickets.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <FiMessageSquare className="text-6xl text-default-300 mb-4" />
+        <h3 className="text-xl font-semibold text-default-600 mb-2">No Tickets Found</h3>
+        <p className="text-default-400">There are no tickets matching your current filter.</p>
       </div>
     );
   }
@@ -194,14 +228,14 @@ const TicketManagement = () => {
                 <TableRow key={ticket.id}>
                   <TableCell>
                     <div>
-                      <p className="font-medium line-clamp-1">{ticket.subject}</p>
+                      <p className="font-medium line-clamp-1">{ticket.subject || 'No Subject'}</p>
                       <p className="text-xs text-default-400">ID: {ticket.id}</p>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <FiUser className="text-default-400" />
-                      <span>{ticket.customerUsername}</span>
+                      <span>{ticket.customerUsername || 'Unknown'}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -217,13 +251,13 @@ const TicketManagement = () => {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Chip color={getStatusColor(ticket.status)} variant="flat" size="sm">
-                      {ticket.status.replace('_', ' ')}
+                    <Chip color={getStatusColor(ticket.status || 'UNKNOWN')} variant="flat" size="sm">
+                      {(ticket.status || 'UNKNOWN').toString().replace('_', ' ')}
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <Chip color={getPriorityColor(ticket.priority)} variant="flat" size="sm">
-                      {ticket.priority}
+                    <Chip color={getPriorityColor(ticket.priority || 'LOW')} variant="flat" size="sm">
+                      {ticket.priority || 'N/A'}
                     </Chip>
                   </TableCell>
                   <TableCell>{formatDate(ticket.createdAt)}</TableCell>

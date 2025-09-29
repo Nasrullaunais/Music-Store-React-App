@@ -81,7 +81,7 @@ const MusicPage: React.FC<MusicsProps> = ({ searchQuery = '' }) => {
         );
     }
 
-    const imageUrl = `http://localhost:8082/uploads/covers/`;
+    const imageUrl = `http://localhost:8082`;
     const audioUrl = `http://localhost:8082`;
 
     return (

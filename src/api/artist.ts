@@ -116,11 +116,9 @@ class ArtistAPI {
     formData.append('musicFile', musicFile);
     formData.append('coverImage', coverImage);
 
-    const response = await api.post(`${this.baseURL}/music/upload`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    // IMPORTANT: Do NOT set the 'Content-Type' header manually for multipart/form-data.
+    // Let the browser/axios set the correct Content-Type along with the boundary.
+    const response = await api.post(`${this.baseURL}/music/upload`, formData);
     return response.data.data;
   }
 

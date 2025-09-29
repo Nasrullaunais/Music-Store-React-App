@@ -45,12 +45,31 @@ export interface FlaggedMusic {
 
 export interface AdminReview {
   id: number;
-  content: string;
+  musicId?: number;
+  // Backend may return nested music object instead of musicId
+  music?: {
+    id?: number;
+    name?: string;
+    title?: string;
+    artist?: string;
+    artistUsername?: string;
+    imageUrl?: string;
+    price?: number;
+  };
+  customerUsername?: string;
+  customerName?: string;
+  // Backend may return nested customer object
+  customer?: {
+    id?: number;
+    username?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+  };
   rating: number;
-  customerUsername: string;
-  musicName: string;
-  artistUsername: string;
+  comment: string; // backend uses 'comment' instead of 'content'
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface AdminOrder {
@@ -201,8 +220,8 @@ export const adminAPI = {
   },
 
   // Ticket Management
-  async getAllTickets(page = 0, size = 10, status?: string): Promise<{ content: AdminTicket[]; totalElements: number }> {
-    const params = new URLSearchParams({ page: page.toString(), size: size.toString() });
+  async getAllTickets(status?: string): Promise<{ content: AdminTicket[]; totalElements: number }> {
+    const params = new URLSearchParams(status ? { status } : {});
     if (status) params.append('status', status);
 
     const response = await apiClient.get(`/api/admin/tickets?${params}`);
