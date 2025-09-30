@@ -17,6 +17,8 @@ import {PlayIcon, PauseIcon, MoreVerticalIcon, PlusIcon, PlaylistIcon} from "@/c
 import {TbDownload} from 'react-icons/tb';
 import {Tabs, Tab, Card, CardBody, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Textarea} from "@heroui/react";
 import {FiStar, FiMessageSquare} from 'react-icons/fi';
+import { FiFlag } from 'react-icons/fi';
+import { flagMusic, getMusicFlagStatus } from '@/api/myMusicApi.ts';
 import {toast} from "react-toastify";
 
 
@@ -37,11 +39,58 @@ interface MusicCardProps {
 const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allPlaylists, onPlaylistUpdate }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [isFlagModalOpen, setIsFlagModalOpen] = useState(false);
+    const [flagReason, setFlagReason] = useState('');
+    const [isFlagging, setIsFlagging] = useState(false);
+    const [isFlagged, setIsFlagged] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState('');
     const [newPlaylistDescription, setNewPlaylistDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
     const isCurrentlyPlaying = currentMusic?.id === music.id;
+
+    // Load whether this music is already flagged by the current customer
+    useEffect(() => {
+        let mounted = true;
+        const loadFlagStatus = async () => {
+            try {
+                const res = await getMusicFlagStatus(music.id);
+                if (mounted && res && typeof res.isFlagged === 'boolean') {
+                    setIsFlagged(res.isFlagged);
+                }
+            } catch (err) {
+                // silently ignore - not critical
+                console.debug('Flag status fetch failed for', music.id, err);
+            }
+        };
+        loadFlagStatus();
+        return () => { mounted = false; };
+    }, [music.id]);
+
+    const handleOpenFlagModal = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setFlagReason('');
+        setIsFlagModalOpen(true);
+    };
+
+    const handleSubmitFlag = async () => {
+        if (!flagReason.trim()) {
+            toast.error('Please provide a reason for flagging');
+            return;
+        }
+        try {
+            setIsFlagging(true);
+            await flagMusic(music.id, flagReason.trim());
+            setIsFlagged(true);
+            setIsFlagModalOpen(false);
+            toast.success('Music flagged successfully. Our moderation team will review it.');
+        } catch (error: any) {
+            console.error('Flag error', error);
+            toast.error(error?.message || 'Failed to flag music');
+        } finally {
+            setIsFlagging(false);
+        }
+    };
 
     const handleCreatePlaylist = async () => {
         if (!newPlaylistName.trim()) return;
@@ -119,8 +168,6 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
             setIsDownloading(false);
         }
     };
-
-
 
     const handleAddToExistingPlaylist = async (playlistId: number) => {
         try {
@@ -200,6 +247,8 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                                         setIsModalOpen(true);
                                     } else if (key === "review") {
                                         setIsReviewModalOpen(true);
+                                    } else if (key === "flag") {
+                                        handleOpenFlagModal();
                                     } else {
                                         const playlistId = parseInt(key.toString().replace('playlist-', ''));
                                         const playlist = allPlaylists.find(p => p.id === playlistId);
@@ -215,6 +264,7 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                                 }}
                                 items={[
                                     { key: "download", label: isDownloading ? 'Downloading...' : 'Download', icon: <TbDownload size={16} /> },
+                                    { key: "flag", label: isFlagged ? 'Flagged' : 'Flag', icon: <FiFlag size={16} /> },
                                     { key: "review", label: "Reviews & Ratings", icon: <FiMessageSquare size={16} /> },
                                     { key: "create", label: "Create new playlist", icon: <PlusIcon size={16} /> },
                                     ...allPlaylists.map((playlist) => {
@@ -237,6 +287,45 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                     </div>
                 </div>
             </div>
+
+            {/* Flag Modal */}
+            <Modal isOpen={isFlagModalOpen} onClose={() => setIsFlagModalOpen(false)}>
+                <ModalContent>
+                    <ModalHeader>Flag "{music.name || music.title}"</ModalHeader>
+                    <ModalBody>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Tell us why you're flagging this content. Our moderation team will review it.</p>
+                        <Textarea
+                            label="Reason"
+                            placeholder="Describe the issue (offensive content, copyright, incorrect metadata, etc.)"
+                            value={flagReason}
+                            onChange={(e) => setFlagReason(e.target.value)}
+                            rows={4}
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="light" onPress={() => setIsFlagModalOpen(false)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            color="danger"
+                            onPress={handleSubmitFlag}
+                            isLoading={isFlagging}
+                            isDisabled={isFlagging}
+                        >
+                            Submit Flag
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            {/* Flag badge (small) */}
+            {isFlagged && (
+                <div className="absolute top-2 right-12">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-700 text-xs rounded-full">
+                        <FiFlag size={12} /> Flagged
+                    </span>
+                </div>
+            )}
 
             {/* Create Playlist Modal */}
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
