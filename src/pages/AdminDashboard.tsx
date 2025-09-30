@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { adminAPI, SystemOverview } from '@/api/admin';
+import { adminAPI, SystemOverview } from '@/api/adminApi.ts';
 import {
   Card,
   CardBody,

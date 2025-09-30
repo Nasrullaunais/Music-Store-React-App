@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminAPI, DetailedAnalytics, PerformanceMetrics } from '@/api/admin';
+import { adminAPI, DetailedAnalytics, PerformanceMetrics } from '@/api/adminApi.ts';
 import {
   Card,
   CardBody,

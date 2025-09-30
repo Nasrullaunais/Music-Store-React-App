@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminAPI, FlaggedMusic } from '@/api/admin';
+import { adminAPI, FlaggedMusic } from '@/api/adminApi.ts';
 import {
   Card,
   CardBody,

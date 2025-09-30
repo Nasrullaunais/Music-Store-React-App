@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminAPI, AdminUser, CreateUserRequest } from '@/api/admin';
+import { adminAPI, AdminUser, CreateUserRequest } from '@/api/adminApi.ts';
 import {
   Card,
   CardBody,

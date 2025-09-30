@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { artistAPI, ArtistProfile as ArtistProfileType } from '@/api/artist';
+import { artistAPI, ArtistProfile as ArtistProfileType } from '@/api/artistApi.ts';
 import {
   Card,
   CardBody,

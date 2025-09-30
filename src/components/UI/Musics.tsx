@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, CardBody, CardHeader, Image, Chip } from '@heroui/react';
-import { fetchAllMusic, PaginatedResponse } from '@/api/music.ts';
+import { fetchAllMusic, PaginatedResponse } from '@/api/musicApi.ts';
 import { Music } from '@/types';
 import AddToCartButton from './AddToCartButton';
 import MusicPreview from "@/components/UI/MusicPreview.tsx";

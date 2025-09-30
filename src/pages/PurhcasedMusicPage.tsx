@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useAuth} from "@/context/AuthContext.tsx";
 import {Music, Playlist} from "@/types";
-import {fetchMyPurchasedMusic} from "@/api/myMusic.ts";
+import {fetchMyPurchasedMusic} from "@/api/myMusicApi.ts";
 import {
     createPlaylist,
     getUserPlaylists,
@@ -10,7 +10,7 @@ import {
     deletePlaylist,
     addMusicToPlaylist,
     removeMusicFromPlaylist
-} from "@/api/playlist.ts";
+} from "@/api/playlistApi.ts";
 import AudioPlayer from "@/components/common/MusicPlayer.tsx";
 import MusicReviews from "@/components/UI/MusicReviews.tsx";
 import {PlayIcon, PauseIcon, MoreVerticalIcon, PlusIcon, PlaylistIcon} from "@/components/icons.tsx";

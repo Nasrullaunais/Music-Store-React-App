@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getCurrentUser } from '../api/auth';
+import { getCurrentUser } from '../api/authApi.ts';
 import { User } from '@/types';
 
 const ProfilePage = () => {

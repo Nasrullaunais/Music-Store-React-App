@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { artistAPI, ArtistDashboardStats } from '@/api/artist';
+import { artistAPI, ArtistDashboardStats } from '@/api/artistApi.ts';
 import {
   Card,
   CardBody,

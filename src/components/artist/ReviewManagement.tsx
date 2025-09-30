@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { artistAPI, Review } from '@/api/artist';
+import { artistAPI, Review } from '@/api/artistApi.ts';
 import { Music } from '@/types';
 import {
   Card,

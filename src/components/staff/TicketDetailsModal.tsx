@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Ticket, TicketMessage } from '@/types';
-import { staffTicketAPI } from '@/api/tickets';
+import { staffTicketAPI } from '@/api/ticketsApi.ts';
 import {
   Modal,
   ModalContent,

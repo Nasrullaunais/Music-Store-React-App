@@ -22,7 +22,7 @@ import {
     deleteReview, 
     getMusicReviews, 
     getUserReviewForMusic 
-} from '@/api/reviews';
+} from '@/api/reviewsApi.ts';
 import { toast } from 'react-toastify';
 
 interface MusicReviewsProps {

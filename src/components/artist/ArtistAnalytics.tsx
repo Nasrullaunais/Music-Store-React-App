@@ -1,5 +1,5 @@
 import { useState, } from 'react';
-import {  ArtistDashboardStats } from '@/api/artist';
+import {  ArtistDashboardStats } from '@/api/artistApi.ts';
 import {
   Card,
   CardBody,

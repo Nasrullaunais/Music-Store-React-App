@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {useNavigate} from "react-router-dom";
-import {loginUser, registerUser} from "../api/auth";
+import {loginUser, registerUser} from "../api/authApi.ts";
 import Register from "../components/UI/Register";
 import Login from "../components/UI/Login";
 import { LoginCredentials, RegisterData } from '@/types';

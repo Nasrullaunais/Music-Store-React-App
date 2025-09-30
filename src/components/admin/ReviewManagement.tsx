@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { adminAPI, AdminReview } from '@/api/admin';
+import { adminAPI, AdminReview } from '@/api/adminApi.ts';
 import {
   Card,
   CardBody,
@@ -31,7 +31,7 @@ import {
   FiAlertTriangle
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
-import { fetchMusicById } from '@/api/music';
+import { fetchMusicById } from '@/api/musicApi.ts';
 import { Music } from '@/types';
 
 const ReviewManagement = () => {

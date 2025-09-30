@@ -1,7 +1,7 @@
 import { Input, Card, CardBody, Spinner } from "@heroui/react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { fetchAllMusic, searchMusic } from "@/api/music";
+import { fetchAllMusic, searchMusic } from "@/api/musicApi.ts";
 import { Music } from "@/types";
 import { FiMusic, FiUser } from "react-icons/fi";
 

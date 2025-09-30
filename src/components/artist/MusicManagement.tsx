@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { artistAPI, PaginatedMusicResponse, MusicUploadData, MusicUpdateData } from '@/api/artist';
+import { artistAPI, PaginatedMusicResponse, MusicUploadData, MusicUpdateData } from '@/api/artistApi.ts';
 import { Music } from '@/types';
 import {
   Card,

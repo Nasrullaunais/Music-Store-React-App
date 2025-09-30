@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { User } from '@/types';
-import { getCurrentUser } from '../api/auth';
+import { getCurrentUser } from '../api/authApi.ts';
 import { useNavigate } from 'react-router-dom';
 import {Spinner} from "@heroui/react";
 

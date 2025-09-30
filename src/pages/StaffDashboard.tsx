@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { staffTicketAPI } from '@/api/tickets';
+import { staffTicketAPI } from '@/api/ticketsApi.ts';
 import { Ticket } from '@/types';
 import {
   Card,

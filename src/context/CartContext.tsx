@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import {Cart, Music} from '@/types';
-import { cartApi } from '@/api/cart';
-import {fetchMyPurchasedMusic} from "@/api/myMusic.ts";
+import { cartApi } from '@/api/cartApi.ts';
+import {fetchMyPurchasedMusic} from "@/api/myMusicApi.ts";
 import { toast } from 'react-toastify';
 import { useAuth } from './AuthContext';
 

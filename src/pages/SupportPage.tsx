@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button, Card, CardBody, CardHeader, Input, Textarea, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Chip, Divider, ScrollShadow } from '@heroui/react';
 import { FiPlus, FiSend, FiMessageCircle, FiClock, FiUser, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { toast } from 'react-toastify';
-import { ticketAPI } from '../api/tickets';
+import { ticketAPI } from '../api/ticketsApi.ts';
 import { Ticket, TicketMessage } from '@/types';
 
 const SupportPage: React.FC = () => {
