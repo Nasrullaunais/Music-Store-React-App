@@ -20,7 +20,7 @@ function App() {
     const authRoutes = ["/auth" ];
     const hideNavbar = authRoutes.includes(location.pathname);
   return (
-      <div className={"flex flex-col items-center justify-center min-h-screen"}>
+      <div className={"flex flex-col items-center justify-start mt-25 min-h-screen"}>
         <div className={"sticky top-0 z-50 rounded-large"}>
             {!hideNavbar && <Navbar />}
         </div>

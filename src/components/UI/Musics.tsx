@@ -85,7 +85,7 @@ const MusicPage: React.FC<MusicsProps> = ({ searchQuery = '' }) => {
     const audioUrl = `http://localhost:8082`;
 
     return (
-        <div className="container mt-5 w-full px-4">
+        <div className="container w-full px-4">
             {/* Search Results Header */}
             {searchQuery && (
                 <div className="mb-8">
