@@ -111,6 +111,7 @@ export const Navbar = () => {
 
   return (
     <HeroUINavbar
+        shouldHideOnScroll={true}
       isBlurred={!isCartOpen}
       maxWidth="full"
       position="sticky"
