@@ -132,6 +132,13 @@ export interface TicketMessage {
     id: number;
     username: string;
   };
+  // Optional unified sender/author object to make frontend rendering robust.
+  // Backend should populate this with the minimal user info (id, username, role).
+  sender?: {
+    id: number;
+    username: string;
+    role?: UserRole;
+  };
 }
 
 export interface Ticket {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Ticket, TicketMessage } from '@/types';
 import { staffTicketAPI } from '@/api/ticketsApi.ts';
 import {
@@ -27,6 +27,7 @@ import {
 } from 'react-icons/fi';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
+import { useAuth } from '@/context/AuthContext';
 
 interface TicketDetailsModalProps {
   ticket: Ticket;
@@ -41,12 +42,18 @@ const TicketDetailsModal = ({ ticket, isOpen, onClose, onUpdate }: TicketDetails
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const { user } = useAuth();
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (isOpen && ticket) {
       loadMessages();
     }
   }, [isOpen, ticket]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const loadMessages = async () => {
     setLoading(true);
@@ -257,41 +264,58 @@ const TicketDetailsModal = ({ ticket, isOpen, onClose, onUpdate }: TicketDetails
               </div>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.isFromStaff ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[70%] p-4 rounded-lg ${
-                        message.isFromStaff
-                          ? 'bg-primary/10 text-primary-foreground'
-                          : 'bg-default-100'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <Avatar
-                          icon={<FiUser />}
-                          size="sm"
-                          className={message.isFromStaff
-                            ? 'bg-primary/20 text-primary'
-                            : 'bg-default-200 text-default-600'
-                          }
-                        />
-                        <span className="text-sm font-medium">
-                          {message.isFromStaff
-                            ? (message.staff?.username || 'Staff Member')
-                            : (message.customer?.username || 'Customer')
-                          }
-                        </span>
-                        <span className="text-xs text-default-500">
-                          {formatDate(message.timestamp)}
-                        </span>
+                {messages.map((message) => {
+                  // Prefer unified sender object when available, then fall back to legacy fields
+                  const isStaffMessage = (message.sender?.role === 'STAFF') || !!message.staff || !!message.isFromStaff;
+
+                  // Prefer sender.id for ownership check; fall back to staff/customer ids
+                  const senderId = message.sender?.id ?? (message.staff?.id ?? message.customer?.id);
+                  const isOwnMessage = !!user && senderId === user.id;
+
+                  const containerJustify = isOwnMessage ? 'justify-end' : 'justify-start';
+                  const bubbleClasses = isOwnMessage
+                    ? 'max-w-[70%] p-4 rounded-lg bg-primary/10 text-primary-foreground'
+                    : 'max-w-[70%] p-4 rounded-lg bg-default-100';
+
+                  const displayName = isOwnMessage
+                    ? 'You'
+                    : (message.sender?.username || (isStaffMessage ? (message.staff?.username || 'Staff Member') : (message.customer?.username || 'Customer')));
+
+                  return (
+                    <div key={message.id} className={`flex ${containerJustify}`}>
+                      {/* Avatar on left for others */}
+                      {!isOwnMessage && (
+                        <div className="mr-3 flex items-start">
+                          <Avatar
+                            icon={<FiUser />}
+                            size="sm"
+                            className={isStaffMessage ? 'bg-primary/20 text-primary' : 'bg-default-200 text-default-600'}
+                          />
+                        </div>
+                      )}
+
+                      <div className={bubbleClasses} aria-label={`${displayName} message`}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-sm font-medium">{displayName}</span>
+                          <span className="text-xs text-default-500">{formatDate(message.timestamp)}</span>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                       </div>
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+
+                      {/* Avatar on right for own messages */}
+                      {isOwnMessage && (
+                        <div className="ml-3 flex items-start">
+                          <Avatar
+                            icon={<FiUser />}
+                            size="sm"
+                            className="bg-primary/40 text-primary-inverse"
+                          />
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
+                <div ref={messagesEndRef} />
               </div>
             )}
           </div>

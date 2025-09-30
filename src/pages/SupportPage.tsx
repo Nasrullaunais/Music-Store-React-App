@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Card, CardBody, CardHeader, Input, Textarea, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Chip, Divider, ScrollShadow } from '@heroui/react';
-import { FiPlus, FiSend, FiMessageCircle, FiClock, FiUser, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { FiPlus, FiSend, FiMessageCircle, FiClock, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { ticketAPI } from '../api/ticketsApi.ts';
 import { Ticket, TicketMessage } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 const SupportPage: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -15,6 +16,7 @@ const SupportPage: React.FC = () => {
   const [createTicketForm, setCreateTicketForm] = useState({ subject: '', description: '' });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   // Load tickets on component mount
   useEffect(() => {
@@ -280,34 +282,58 @@ const SupportPage: React.FC = () => {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {messages.map((message) => (
-                          <div
-                            key={message.id}
-                            className={`flex ${message.isFromStaff ? 'justify-start' : 'justify-end'}`}
-                          >
-                            <div
-                              className={`max-w-[70%] rounded-lg p-3 ${
-                                message.isFromStaff
-                                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
-                                  : 'bg-indigo-600 text-white'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2 mb-1">
-                                <FiUser size={14} />
-                                <span className="text-xs font-medium">
-                                  {message.isFromStaff
-                                    ? message.staff?.username || 'Staff'
-                                    : message.customer?.username || 'You'
-                                  }
-                                </span>
-                                <span className="text-xs opacity-70">
-                                  {formatDate(message.timestamp)}
-                                </span>
+                        {messages.map((message) => {
+                          // Determine sender type robustly:
+                          // 1) prefer `message.sender.role` if present
+                          // 2) fall back to explicit staff/customer objects
+                          // 3) fall back to isFromStaff flag
+                          const senderRoleIsStaff = message.sender?.role === 'STAFF';
+                          const isStaffMessage = senderRoleIsStaff || !!message.staff || !!message.isFromStaff;
+
+                          // Determine if the message was sent by the currently authenticated user.
+                          // Prefer sender.id when available, otherwise compare against staff/customer ids.
+                          const senderId = message.sender?.id ?? (message.staff?.id ?? message.customer?.id);
+                          const isOwnMessage = !!user && senderId === user.id;
+
+                          // Presentation values
+                          const containerJustify = isOwnMessage ? 'justify-end' : 'justify-start';
+                          const bubbleClasses = isOwnMessage
+                            ? 'bg-indigo-600 text-white rounded-lg p-3 max-w-[70%]'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg p-3 max-w-[70%]';
+                          // Prefer sender.username when available, then legacy fields
+                          const displayName = isOwnMessage
+                            ? 'You'
+                            : (message.sender?.username || (isStaffMessage ? (message.staff?.username || 'Staff') : (message.customer?.username || 'Customer')));
+
+                          return (
+                            <div key={message.id} className={`flex ${containerJustify}`}>
+                              {/* Avatar + bubble */}
+                              {!isOwnMessage && (
+                                <div className="mr-3 flex items-start">
+                                  <div className="h-8 w-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-semibold">
+                                    {(displayName || 'U').charAt(0).toUpperCase()
+                                  }</div>
+                                </div>
+                              )}
+
+                              <div className={bubbleClasses} aria-label={`${displayName} message`}>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-xs font-medium">{displayName}</span>
+                                  <span className="text-xs opacity-70">{formatDate(message.timestamp)}</span>
+                                </div>
+                                <p className="text-sm">{message.content}</p>
                               </div>
-                              <p className="text-sm">{message.content}</p>
+
+                              {isOwnMessage && (
+                                <div className="ml-3 flex items-start">
+                                  <div className="h-8 w-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold">
+                                    {(displayName || 'U').charAt(0).toUpperCase()
+                                  }</div>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                         <div ref={messagesEndRef} />
                       </div>
                     )}
