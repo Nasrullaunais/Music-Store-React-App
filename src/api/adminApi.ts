@@ -94,6 +94,10 @@ export interface AdminTicket {
   assignedStaffUsername?: string;
   createdAt: string;
   updatedAt: string;
+  // New optional/transient fields returned by the backend when assigning or fetching tickets
+  assignedStaffName?: string;
+  customerName?: string;
+  closedAt?: string | null;
 }
 
 export interface PerformanceMetrics {
@@ -228,8 +232,20 @@ export const adminAPI = {
     return response.data;
   },
 
-  async assignTicket(ticketId: number, staffId: number): Promise<void> {
-    await apiClient.post(`/api/admin/tickets/${ticketId}/assign`, { staffId });
+  // Fetch staff users to populate assignment dropdown
+  async getStaffUsers(): Promise<AdminUser[]> {
+    // Backend endpoint should support role filter; fall back to all users if not
+    const response = await apiClient.get('/api/admin/users?role=STAFF&page=0&size=100');
+    // Response might be a paged object or array
+    const data: any = response.data;
+    if (Array.isArray(data)) return data as AdminUser[];
+    return (data.content || []) as AdminUser[];
+  },
+
+  async assignTicket(ticketId: number, staffId: number): Promise<AdminTicket> {
+    // New backend endpoint expects staffId as a path parameter and returns the updated Ticket
+    const response = await apiClient.put(`/api/admin/tickets/${ticketId}/assign/${staffId}`);
+    return response.data;
   },
 
   async updateTicketStatus(ticketId: number, status: string): Promise<void> {
