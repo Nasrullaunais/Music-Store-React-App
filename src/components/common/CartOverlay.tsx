@@ -26,19 +26,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  // Match home page image base path
-  const COVER_BASE = 'http://localhost:8082/uploads/covers/';
-  const resolveImage = (val?: string) => {
-    if (!val) return '/placeholder-album.jpg';
-    // If already a full URL, return as-is
-    if (val.startsWith('http://') || val.startsWith('https://')) return val;
-    // If the path already contains uploads/covers, return as-is or ensure leading slash
-    if (val.includes('/uploads/covers')) {
-      return val.startsWith('/') ? window.location.origin + val : val;
-    }
-    // Otherwise assume it's a filename and append base
-    return COVER_BASE + val;
-  };
+
 
   // Compute total client-side to ensure it's always visible
   const derivedTotal = cart?.items.reduce((sum, it) => {
@@ -87,6 +75,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const imageUrl = `http://localhost:8082`;
   const overlay = (
     <div className="fixed inset-0 z-[9999]">
       {/* Backdrop (no blur to avoid navbar visual glitch) */}
@@ -154,7 +143,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
                   {cart.items.map((item: CartItem) => (
                     <div key={item.id} className="flex items-start gap-4">
                       <img
-                        src={resolveImage(item.music.imageUrl || item.music.coverImage)}
+                        src={imageUrl.concat(item.music.imageUrl ?? '/placeholder-album.jpg')}
                         alt={item.music.name}
                         className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
                         onError={(e) => {(e.target as HTMLImageElement).src = '/placeholder-album.jpg';}}
