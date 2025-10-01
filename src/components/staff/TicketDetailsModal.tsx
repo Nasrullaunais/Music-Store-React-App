@@ -195,8 +195,8 @@ const TicketDetailsModal = ({ ticket, isOpen, onClose, onUpdate }: TicketDetails
       scrollBehavior="inside"
       classNames={{
         body: "py-6",
-        backdrop: "bg-[#292f46]/50 backdrop-opacity-40",
-        base: "border-[#292f46] bg-[#19172c] dark:bg-[#19172c] text-[#a8b0d3]",
+        backdrop: "backdrop-blur-3xl",
+        base: " border-[#292f46] bg-violet-100 dark:bg-[#19172c] text-default-700 dark:text-default-300",
         header: "border-b-[1px] border-[#292f46]",
         footer: "border-t-[1px] border-[#292f46]",
       }}
@@ -274,8 +274,8 @@ const TicketDetailsModal = ({ ticket, isOpen, onClose, onUpdate }: TicketDetails
 
                   const containerJustify = isOwnMessage ? 'justify-end' : 'justify-start';
                   const bubbleClasses = isOwnMessage
-                    ? 'max-w-[70%] p-4 rounded-lg bg-primary/10 text-primary-foreground'
-                    : 'max-w-[70%] p-4 rounded-lg bg-default-100';
+                    ? 'max-w-[70%] p-4 rounded-lg bg-primary/30 text-primary-foreground'
+                    : 'max-w-[70%] p-4 rounded-lg bg-primary/10 dark:bg-default-800 shadow-md';
 
                   const displayName = isOwnMessage
                     ? 'You'
@@ -289,7 +289,7 @@ const TicketDetailsModal = ({ ticket, isOpen, onClose, onUpdate }: TicketDetails
                           <Avatar
                             icon={<FiUser />}
                             size="sm"
-                            className={isStaffMessage ? 'bg-primary/20 text-primary' : 'bg-default-200 text-default-600'}
+                            className={isStaffMessage ? 'bg-primary/20 text-primary' : 'bg-primary/10 text-default-600'}
                           />
                         </div>
                       )}
@@ -330,7 +330,7 @@ const TicketDetailsModal = ({ ticket, isOpen, onClose, onUpdate }: TicketDetails
                 onChange={(e) => setNewMessage(e.target.value)}
                 minRows={3}
                 maxRows={6}
-                className="mb-4"
+                className="mb-4 bg-primary/10 dark:bg-default-800 rounded-lg pt-2 px-1"
               />
             </div>
           )}
@@ -396,6 +396,7 @@ const TicketDetailsModal = ({ ticket, isOpen, onClose, onUpdate }: TicketDetails
                 isLoading={sending}
                 isDisabled={!newMessage.trim()}
                 startContent={<FiSend />}
+                className="text-white"
               >
                 Send Reply
               </Button>
