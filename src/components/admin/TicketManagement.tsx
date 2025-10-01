@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminAPI, AdminTicket } from '@/api/adminApi.ts';
+import { adminAPI, AdminTicket, AdminUser } from '@/api/adminApi.ts';
 import {
   Card,
   CardBody,
@@ -21,8 +21,7 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem,
-  Input
+  SelectItem
 } from '@heroui/react';
 import {
   FiMessageSquare,
@@ -40,6 +39,7 @@ const TicketManagement = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedTicket, setSelectedTicket] = useState<AdminTicket | null>(null);
   const [assignStaffId, setAssignStaffId] = useState('');
+  const [staffList, setStaffList] = useState<AdminUser[]>([]);
   const [newStatus, setNewStatus] = useState('');
   const [actionType, setActionType] = useState<'assign' | 'status'>('assign');
 
@@ -87,6 +87,8 @@ const TicketManagement = () => {
     setSelectedTicket(ticket);
     setActionType('assign');
     setAssignStaffId('');
+    // Load staff users for selection
+    loadStaffUsers();
     onOpen();
   };
 
@@ -101,21 +103,55 @@ const TicketManagement = () => {
     if (!selectedTicket) return;
 
     try {
-      if (actionType === 'assign' && assignStaffId) {
-        await adminAPI.assignTicket(selectedTicket.id, parseInt(assignStaffId));
+      if (actionType === 'assign') {
+        if (!assignStaffId) {
+          toast.warn('Please select a staff member to assign the ticket to');
+          return;
+        }
+        // call updated adminAPI.assignTicket which returns the updated ticket
+        const updated = await adminAPI.assignTicket(selectedTicket.id, parseInt(assignStaffId));
         toast.success('Ticket assigned successfully');
+        // Update local tickets list with the updated ticket data if present
+        if (updated && updated.id) {
+          setTickets((prev) => prev.map((t) => (t.id === updated.id ? { ...t, ...updated } : t)));
+          // update the selected ticket shown in modal (if still open)
+          setSelectedTicket((prev) => (prev && prev.id === updated.id ? { ...prev, ...updated } : prev));
+          setAssignStaffId('');
+        } else {
+          // Fallback to reload if no updated payload
+          await loadTickets();
+        }
       } else if (actionType === 'status' && newStatus) {
         await adminAPI.updateTicketStatus(selectedTicket.id, newStatus);
         toast.success('Ticket status updated successfully');
+        // Update local copy or reload
+        setTickets((prev) => prev.map((t) => (t.id === selectedTicket.id ? { ...t, status: newStatus } : t)));
       }
 
       onClose();
-      loadTickets();
+      // Keep page consistent by reloading summary counts if needed
     } catch (error) {
       toast.error(`Failed to ${actionType} ticket`);
       console.error(`${actionType} error:`, error);
     }
   };
+
+  const loadStaffUsers = async () => {
+    try {
+      const staff = await adminAPI.getStaffUsers();
+      setStaffList(staff || []);
+    } catch (error) {
+      console.error('Failed to load staff users:', error);
+      setStaffList([]);
+    }
+  };
+
+  // Always build SelectItem elements in an array to satisfy typing for Select children
+  const staffOptions = staffList.length === 0
+    ? [<SelectItem key="none" isDisabled>No staff available</SelectItem>]
+    : staffList.map((s) => (
+      <SelectItem key={s.id.toString()}>{s.username} ({s.email})</SelectItem>
+    ));
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -239,10 +275,10 @@ const TicketManagement = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {ticket.assignedStaffUsername ? (
+                    {ticket.assignedStaffUsername || ticket.assignedStaffName ? (
                       <div className="flex items-center gap-2">
                         <FiUserCheck className="text-success" />
-                        <span>{ticket.assignedStaffUsername}</span>
+                        <span>{ticket.assignedStaffName || ticket.assignedStaffUsername}</span>
                       </div>
                     ) : (
                       <Chip color="warning" variant="flat" size="sm">
@@ -334,13 +370,14 @@ const TicketManagement = () => {
                 </div>
 
                 {actionType === 'assign' ? (
-                  <Input
-                    label="Staff ID"
-                    placeholder="Enter staff member ID to assign"
-                    value={assignStaffId}
-                    onChange={(e) => setAssignStaffId(e.target.value)}
-                    type="number"
-                  />
+                  <Select
+                    label="Assign to Staff"
+                    placeholder="Select staff member"
+                    selectedKeys={assignStaffId ? [assignStaffId] : []}
+                    onSelectionChange={(keys) => setAssignStaffId(Array.from(keys)[0] as string)}
+                  >
+                    {staffOptions}
+                  </Select>
                 ) : (
                   <Select
                     label="New Status"
@@ -363,6 +400,7 @@ const TicketManagement = () => {
             <Button
               color={actionType === 'assign' ? 'primary' : 'secondary'}
               onPress={confirmAction}
+              isDisabled={actionType === 'assign' ? !assignStaffId : false}
             >
               {actionType === 'assign' ? 'Assign Ticket' : 'Update Status'}
             </Button>

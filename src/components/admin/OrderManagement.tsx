@@ -187,18 +187,33 @@ const OrderManagement = () => {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <FiUser className="text-default-400" />
-                      <span>{order.customerUsername}</span>
+                      <span>
+                        {(
+                          // Prefer nested customer object
+                          (order as any).customer?.username ||
+                          // Legacy flat field
+                          (order as any).customerUsername ||
+                          // Another legacy name
+                          (order as any).customerName ||
+                          'Unknown'
+                        )}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      {(order.items || []).slice(0, 2).map((item, index) => (
-                        <div key={index} className="flex items-center gap-2 text-sm">
-                          <FiMusic className="text-primary text-xs" />
-                          <span className="truncate max-w-32">{item.musicName}</span>
-                          <span className="text-xs text-default-500">by {item.artistUsername}</span>
-                        </div>
-                      ))}
+                      {(order.items || []).slice(0, 2).map((item: any, index: number) => {
+                        // Item may be in several shapes: { musicName, artistUsername }, or { music: { name, artistUsername } }
+                        const musicName = item.musicName || item.name || item.title || item.music?.name || item.music?.title || 'Unknown Track';
+                        const artistName = item.artistUsername || item.artist || item.music?.artist || item.music?.artistUsername || 'Unknown Artist';
+                        return (
+                          <div key={index} className="flex items-center gap-2 text-sm">
+                            <FiMusic className="text-primary text-xs" />
+                            <span className="truncate max-w-32">{musicName}</span>
+                            <span className="text-xs text-default-500">by {artistName}</span>
+                          </div>
+                        );
+                      })}
                       {(order.items?.length || 0) > 2 && (
                         <p className="text-xs text-default-500">
                           +{(order.items?.length || 0) - 2} more items
@@ -268,7 +283,12 @@ const OrderManagement = () => {
                     <div>
                       <p className="font-semibold">Order #{selectedOrder.id}</p>
                       <p className="text-sm text-default-600">
-                        Customer: {selectedOrder.customerUsername}
+                        Customer: {(
+                          (selectedOrder as any).customer?.username ||
+                          (selectedOrder as any).customerUsername ||
+                          (selectedOrder as any).customerName ||
+                          'Unknown'
+                        )}
                       </p>
                       <p className="text-sm text-default-600">
                         Date: {formatDate(selectedOrder.orderDate)}
@@ -287,16 +307,21 @@ const OrderManagement = () => {
                   <div className="border-t border-divider pt-3">
                     <p className="font-medium mb-2">Order Items:</p>
                     <div className="space-y-2">
-                      {(selectedOrder.items || []).map((item, index) => (
-                        <div key={index} className="flex justify-between items-center text-sm">
-                          <div className="flex items-center gap-2">
-                            <FiMusic className="text-primary" />
-                            <span>{item.musicName}</span>
-                            <span className="text-default-500">by {item.artistUsername}</span>
+                      {(selectedOrder.items || []).map((item: any, index: number) => {
+                        const musicName = item.musicName || item.name || item.title || item.music?.name || item.music?.title || 'Unknown Track';
+                        const artistName = item.artistUsername || item.artist || item.music?.artist || item.music?.artistUsername || 'Unknown Artist';
+                        const price = typeof item.price === 'number' ? item.price : (item.music?.price || 0);
+                        return (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <div className="flex items-center gap-2">
+                              <FiMusic className="text-primary" />
+                              <span>{musicName}</span>
+                              <span className="text-default-500">by {artistName}</span>
+                            </div>
+                            <span className="font-medium">{formatCurrency(price)}</span>
                           </div>
-                          <span className="font-medium">{formatCurrency(item.price)}</span>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {(!selectedOrder.items || selectedOrder.items.length === 0) && (
                         <p className="text-sm text-default-500">No items found</p>
                       )}

@@ -22,6 +22,35 @@ export interface CreateUserRequest {
   lastName?: string;
 }
 
+export interface StaffRegistrationRequest {
+  username: string;
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  position?: string;
+}
+
+export interface AdminRegistrationRequest {
+  username: string;
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface StaffUser {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  enabled: boolean;
+  createdAt: string;
+  position?: string;
+}
+
 export interface SystemOverview {
   totalUsers: number;
   totalMusic: number;
@@ -263,5 +292,16 @@ export const adminAPI = {
     if (reason) params.append('reason', reason);
 
     await apiClient.post(`/api/admin/system/shutdown?${params}`);
-  }
+  },
+
+  // Staff and Admin Registration
+  async registerStaff(staffData: StaffRegistrationRequest): Promise<StaffUser> {
+    const response = await apiClient.post('/api/admin/staff/register', staffData);
+    return response.data;
+  },
+
+  async registerAdmin(adminData: AdminRegistrationRequest): Promise<AdminUser> {
+    const response = await apiClient.post('/api/admin/admin/register', adminData);
+    return response.data;
+  },
 };

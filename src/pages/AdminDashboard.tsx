@@ -20,7 +20,8 @@ import {
   FiSettings,
   FiTrendingUp,
   FiActivity,
-  FiDollarSign
+  FiDollarSign,
+  FiUserPlus
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 
@@ -32,6 +33,7 @@ import ReviewManagement from '@/components/admin/ReviewManagement';
 import OrderManagement from '@/components/admin/OrderManagement';
 import TicketManagement from '@/components/admin/TicketManagement';
 import SystemManagement from '@/components/admin/SystemManagement';
+import UserRegistration from '@/components/admin/UserRegistration';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -334,6 +336,18 @@ const AdminDashboard = () => {
               }
             >
               <SystemManagement />
+            </Tab>
+
+            <Tab
+              key="registration"
+              title={
+                <div className="flex items-center space-x-2">
+                  <FiUserPlus />
+                  <span>User Registration</span>
+                </div>
+              }
+            >
+              <UserRegistration />
             </Tab>
           </Tabs>
         </CardBody>
