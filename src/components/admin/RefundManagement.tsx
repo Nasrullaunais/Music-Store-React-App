@@ -186,58 +186,58 @@ const RefundManagement = () => {
       {/* Statistics Cards */}
       {statistics && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5">
+          <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
             <CardBody className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
-                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                  <p className="text-sm text-default-600">Pending</p>
+                  <p className="text-2xl font-bold text-warning">
                     {statistics.pendingCount || 0}
                   </p>
                 </div>
-                <FiClock className="text-3xl text-amber-600 dark:text-amber-400" />
+                <FiClock className="text-3xl text-warning" />
               </div>
             </CardBody>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5">
+          <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
             <CardBody className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Approved</p>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  <p className="text-sm text-default-600">Approved</p>
+                  <p className="text-2xl font-bold text-success">
                     {statistics.approvedCount || 0}
                   </p>
                 </div>
-                <FiCheckCircle className="text-3xl text-green-600 dark:text-green-400" />
+                <FiCheckCircle className="text-3xl text-success" />
               </div>
             </CardBody>
           </Card>
 
-          <Card className="bg-gradient-to-br from-red-500/10 to-red-600/5">
+          <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
             <CardBody className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Rejected</p>
-                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                  <p className="text-sm text-default-600">Rejected</p>
+                  <p className="text-2xl font-bold text-danger">
                     {statistics.rejectedCount || 0}
                   </p>
                 </div>
-                <FiXCircle className="text-3xl text-red-600 dark:text-red-400" />
+                <FiXCircle className="text-3xl text-danger" />
               </div>
             </CardBody>
           </Card>
 
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5">
+          <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
             <CardBody className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Refunded</p>
-                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                  <p className="text-sm text-default-600">Total Refunded</p>
+                  <p className="text-2xl font-bold text-primary">
                     {formatCurrency(statistics.totalRefundAmount || 0)}
                   </p>
                 </div>
-                <FiDollarSign className="text-3xl text-indigo-600 dark:text-indigo-400" />
+                <FiDollarSign className="text-3xl text-primary" />
               </div>
             </CardBody>
           </Card>
@@ -245,7 +245,7 @@ const RefundManagement = () => {
       )}
 
       {/* Refunds Table */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardHeader>
           <div className="flex justify-between items-center w-full">
             <h3 className="text-lg font-semibold flex items-center gap-2">

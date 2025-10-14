@@ -36,7 +36,7 @@ const TicketManagement = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
   const [selectedTicket, setSelectedTicket] = useState<AdminTicket | null>(null);
   const [assignStaffId, setAssignStaffId] = useState('');
   const [staffList, setStaffList] = useState<AdminUser[]>([]);
@@ -52,7 +52,7 @@ const TicketManagement = () => {
   const loadTickets = async () => {
     setLoading(true);
     try {
-      const filterValue = statusFilter === 'all' ? undefined : statusFilter || undefined;
+      const filterValue = statusFilter === '' || statusFilter === 'all' ? undefined : statusFilter;
       const response = await adminAPI.getAllTickets(filterValue);
       console.log('Tickets:', response);
 
@@ -205,7 +205,7 @@ const TicketManagement = () => {
   return (
     <div className="space-y-6">
       {/* Header and Controls */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardHeader>
           <div className="flex justify-between items-center w-full">
             <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -214,11 +214,17 @@ const TicketManagement = () => {
             </h3>
             <div className="flex gap-4">
               <Select
-                placeholder="Filter by status"
+                label="Filter by status"
+                placeholder="All Statuses"
                 selectedKeys={statusFilter ? [statusFilter] : []}
-                onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || '')}
-                className="max-w-xs"
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys)[0] as string;
+                  setStatusFilter(selected === 'all' ? '' : selected);
+                  setPage(1); // Reset to first page when filter changes
+                }}
+                className="min-w-[200px] bg-white/20 backdrop-blur-lg bg-opacity-80 rounded-2xl"
                 aria-label="Filter tickets by status"
+                variant="flat"
               >
                 <SelectItem key="all">All Statuses</SelectItem>
                 <SelectItem key="OPEN">Open</SelectItem>
@@ -232,10 +238,15 @@ const TicketManagement = () => {
       </Card>
 
       {/* Tickets Table */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardBody>
           <Table
             aria-label="Tickets table"
+            classNames={{
+                wrapper: "bg-transparent shadow-none",
+                th: "backdrop-blur-lg",
+                td: "bg-transparent"
+            }}
             bottomContent={
               <div className="flex w-full justify-center">
                 <Pagination
@@ -246,6 +257,13 @@ const TicketManagement = () => {
                   page={page}
                   total={totalPages}
                   onChange={setPage}
+                  classNames={{
+                      wrapper: "backdrop-blur-slg rounded-xl",
+                      item: "backdrop-blur-lg rounded-lg",
+                      cursor: "bg-primary/60 backdrop-blur-lg rounded-lg",
+                      prev: "backdrop-blur-lg",
+                      next: "backdrop-blur-lg"
+                  }}
                 />
               </div>
             }

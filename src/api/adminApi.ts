@@ -254,7 +254,7 @@ export const adminAPI = {
 
   // Ticket Management
   async getAllTickets(status?: string): Promise<{ content: AdminTicket[]; totalElements: number }> {
-    const params = new URLSearchParams(status ? { status } : {});
+    const params = new URLSearchParams();
     if (status) params.append('status', status);
 
     const response = await apiClient.get(`/api/admin/tickets?${params}`);
@@ -303,5 +303,32 @@ export const adminAPI = {
   async registerAdmin(adminData: AdminRegistrationRequest): Promise<AdminUser> {
     const response = await apiClient.post('/api/admin/admin/register', adminData);
     return response.data;
+  },
+
+  // Refund Management
+  async getAllRefunds(page = 0, size = 10, status?: string): Promise<{ content: any[]; totalElements: number }> {
+    const params = new URLSearchParams({ page: page.toString(), size: size.toString() });
+    if (status) params.append('status', status);
+
+    const response = await apiClient.get(`/api/admin/refunds?${params}`);
+    return response.data;
+  },
+
+  async getRefundById(refundId: number): Promise<any> {
+    const response = await apiClient.get(`/api/admin/refunds/${refundId}`);
+    return response.data;
+  },
+
+  async getRefundStatistics(): Promise<any> {
+    const response = await apiClient.get('/api/admin/refunds/statistics');
+    return response.data;
+  },
+
+  async approveRefund(refundId: number, adminNotes?: string): Promise<void> {
+    await apiClient.put(`/api/admin/refunds/${refundId}/approve`, { adminNotes });
+  },
+
+  async rejectRefund(refundId: number, adminNotes: string): Promise<void> {
+    await apiClient.put(`/api/admin/refunds/${refundId}/reject`, { adminNotes });
   },
 };

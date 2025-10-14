@@ -172,6 +172,19 @@ const UserManagement = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  // Filter users based on search query
+  const filteredUsers = users.filter(user => {
+    if (!searchQuery.trim()) return true;
+
+    const query = searchQuery.toLowerCase();
+    return (
+      user.username?.toLowerCase().includes(query) ||
+      user.email?.toLowerCase().includes(query) ||
+      user.firstName?.toLowerCase().includes(query) ||
+      user.lastName?.toLowerCase().includes(query)
+    );
+  });
+
   if (loading && users.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -183,7 +196,7 @@ const UserManagement = () => {
   return (
     <div className="space-y-6">
       {/* Header and Controls */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardHeader>
           <div className="flex justify-between items-center w-full">
             <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -202,13 +215,13 @@ const UserManagement = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               startContent={<FiSearch />}
-              className="max-w-xs"
+              className="max-w-xs bg-white/20 backdrop-blur-sm rounded-xl"
             />
             <Select
               placeholder="Filter by role"
               selectedKeys={roleFilter ? [roleFilter] : []}
               onSelectionChange={(keys) => setRoleFilter(Array.from(keys)[0] as string || '')}
-              className="max-w-xs"
+              className="max-w-xs bg-white/20 backdrop-blur-sm rounded-xl"
               aria-label="Filter users by role"
             >
               <SelectItem key="all">All Roles</SelectItem>
@@ -222,20 +235,31 @@ const UserManagement = () => {
       </Card>
 
       {/* Users Table */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardBody>
           <Table
             aria-label="Users table"
+            classNames={{
+              wrapper: "bg-transparent shadow-none",
+              th: "bg-white/20 backdrop-blur-sm",
+              td: "bg-transparent"
+            }}
             bottomContent={
               <div className="flex w-full justify-center">
                 <Pagination
                   isCompact
                   showControls
-                  showShadow
                   color="primary"
                   page={page}
                   total={totalPages}
                   onChange={setPage}
+                  classNames={{
+                    wrapper: "backdrop-blur-slg rounded-xl",
+                    item: "backdrop-blur-lg rounded-lg",
+                    cursor: "bg-primary/60 backdrop-blur-lg rounded-lg",
+                    prev: "backdrop-blur-lg",
+                    next: "backdrop-blur-lg"
+                  }}
                 />
               </div>
             }
@@ -249,7 +273,7 @@ const UserManagement = () => {
               <TableColumn>ACTIONS</TableColumn>
             </TableHeader>
             <TableBody>
-              {users.map((user, index) => (
+              {filteredUsers.map((user, index) => (
                 <TableRow key={`${user.id}-${index}`}>
                   <TableCell>
                     <div>

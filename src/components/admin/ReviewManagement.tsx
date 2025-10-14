@@ -226,35 +226,44 @@ const ReviewManagement = () => {
   return (
     <div className="space-y-6">
       {/* Header and Controls */}
-      <Card>
+      <Card className="bg-white/40 backdrop-blur-md border-white/50 shadow-lg">
         <CardHeader>
-          <div className="flex justify-between items-center w-full">
+          <div className="flex justify-between items-center w-full flex-wrap gap-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
-              <FiStar />
+              <FiStar className="text-warning" />
               Review Management
             </h3>
-            <div className="flex gap-4 items-center w-full md:w-auto">
-              <Select
-                label="Sort by"
-                selectedKeys={[sortBy]}
-                onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
-                className="max-w-xs"
-                aria-label="Sort reviews by criteria"
-              >
-                <SelectItem key="date">Date</SelectItem>
-                <SelectItem key="rating">Rating</SelectItem>
-                <SelectItem key="customer">Customer</SelectItem>
-              </Select>
-            </div>
+            <Select
+              label="Sort by"
+              placeholder="Select sorting"
+              selectedKeys={[sortBy]}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0] as string;
+                setSortBy(selected);
+                setPage(1); // Reset to first page when sort changes
+              }}
+              className="min-w-[180px] max-w-[200px] bg-white/40 backdrop-blur-md bg-opacity-75 rounded-xl"
+              aria-label="Sort reviews by criteria"
+              variant="flat"
+            >
+              <SelectItem key="date">Date (Newest)</SelectItem>
+              <SelectItem key="rating">Rating (Highest)</SelectItem>
+              <SelectItem key="customer">Customer Name</SelectItem>
+            </Select>
           </div>
         </CardHeader>
       </Card>
 
       {/* Reviews Table */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardBody>
           <Table
             aria-label="Reviews table"
+            classNames={{
+                wrapper: "bg-transparent shadow-none",
+                th: "bg-white/20 backdrop-blur-sm",
+                td: "bg-transparent"
+            }}
             bottomContent={
               <div className="flex w-full justify-center">
                 <Pagination
@@ -265,6 +274,13 @@ const ReviewManagement = () => {
                   page={page}
                   total={totalPages}
                   onChange={setPage}
+                  classNames={{
+                      wrapper: "backdrop-blur-slg rounded-xl",
+                      item: "backdrop-blur-lg rounded-lg",
+                      cursor: "bg-primary/60 backdrop-blur-lg rounded-lg",
+                      prev: "backdrop-blur-lg",
+                      next: "backdrop-blur-lg"
+                  }}
                 />
               </div>
             }

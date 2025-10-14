@@ -3,8 +3,21 @@
 
 body, html, #root, #__next {
     min-height: 100vh;
-    background: linear-gradient(135deg, #c8c8ff 50%, #f1e7ff 100%, #8379d7 100%, #dacff9 100%, #f1e7ff 100%);
-    /* Alternative gradient options: */
-    /* background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); */
-    /* background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); */
+    background: linear-gradient(135deg,
+    #d7bffe 0%,      /* Light lavender */
+    #c7bae9 25%,     /* Soft purple */ #c0acfb 50%,     /* Medium purple */
+    #b193fd 75%,     /* Vibrant purple */
+    #d0c0f7 100%     /* Light purple-pink */
+    );
+    background-attachment: fixed;
+    /* Alternative gradient options with different vibes: */
+
+    /* Option 2 - Warmer purple gradient */
+    /* background: linear-gradient(135deg, #f3e7ff 0%, #e5d4ff 25%, #d4b5ff 50%, #c9a7ff 75%, #e8d9ff 100%); */
+
+    /* Option 3 - Cooler blue-purple gradient */
+    /* background: linear-gradient(135deg, #e8e5ff 0%, #d5ceff 25%, #c5b9ff 50%, #b8a9ff 75%, #ddd6ff 100%); */
+
+    /* Option 4 - Dreamy pastel gradient */
+    /* background: linear-gradient(135deg, #f5f0ff 0%, #ebe4ff 25%, #ddd0ff 50%, #d4c5ff 75%, #ede6ff 100%); */
 }

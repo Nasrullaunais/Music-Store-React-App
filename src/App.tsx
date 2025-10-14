@@ -18,13 +18,17 @@ import ProtectedRoute from "./components/common/ProtectedRoutes.tsx";
 function App() {
     const location = useLocation();
 
-    const authRoutes = ["/auth" ];
+    const authRoutes = ["/auth", "/admin"];
     const hideNavbar = authRoutes.includes(location.pathname);
+    const isAdminRoute = location.pathname === "/admin";
+
   return (
-      <div className={"flex flex-col items-center justify-start mt-25 min-h-screen"}>
-        <div className={"sticky top-0 z-50 rounded-large"}>
-            {!hideNavbar && <Navbar />}
-        </div>
+      <div className={isAdminRoute ? "min-h-screen" : "flex flex-col items-center justify-start mt-25 min-h-screen"}>
+        {!isAdminRoute && (
+          <div className={"sticky top-0 z-50 rounded-large"}>
+              {!hideNavbar && <Navbar />}
+          </div>
+        )}
         <Routes>
             <Route element={<HomePage />} path="/" />
             <Route element={<AuthPage />} path="/auth" />

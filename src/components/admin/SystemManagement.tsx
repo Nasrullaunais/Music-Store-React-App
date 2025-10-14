@@ -74,7 +74,7 @@ const SystemManagement = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardHeader>
           <div className="flex justify-between items-center w-full">
             <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -90,7 +90,7 @@ const SystemManagement = () => {
 
       {/* System Status */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
+        <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
           <CardHeader>
             <h4 className="text-lg font-semibold flex items-center gap-2">
               <FiServer />
@@ -123,7 +123,7 @@ const SystemManagement = () => {
           </CardBody>
         </Card>
 
-        <Card>
+        <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
           <CardHeader>
             <h4 className="text-lg font-semibold flex items-center gap-2">
               <FiActivity />
@@ -159,7 +159,7 @@ const SystemManagement = () => {
       </div>
 
       {/* System Actions */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardHeader>
           <h4 className="text-lg font-semibold flex items-center gap-2">
             <FiShield />
@@ -224,7 +224,7 @@ const SystemManagement = () => {
       </Card>
 
       {/* System Information */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardHeader>
           <h4 className="text-lg font-semibold flex items-center gap-2">
             <FiServer />

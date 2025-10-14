@@ -120,7 +120,7 @@ const OrderManagement = () => {
   return (
     <div className="space-y-6">
       {/* Header and Controls */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardHeader>
           <div className="flex justify-between items-center w-full">
             <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -148,10 +148,15 @@ const OrderManagement = () => {
       </Card>
 
       {/* Orders Table */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardBody>
           <Table
             aria-label="Orders table"
+            classNames={{
+              wrapper: "bg-transparent shadow-none",
+              th: "bg-white/20 backdrop-blur-sm",
+              td: "bg-transparent"
+            }}
             bottomContent={
               <div className="flex w-full justify-center">
                 <Pagination
@@ -162,6 +167,13 @@ const OrderManagement = () => {
                   page={page}
                   total={totalPages}
                   onChange={setPage}
+                  classNames={{
+                      wrapper: "backdrop-blur-slg rounded-xl",
+                      item: "backdrop-blur-lg rounded-lg",
+                      cursor: "bg-primary/60 backdrop-blur-lg rounded-lg",
+                      prev: "backdrop-blur-lg",
+                      next: "backdrop-blur-lg"
+                  }}
                 />
               </div>
             }

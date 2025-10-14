@@ -118,7 +118,7 @@ const ContentModeration = ({ onContentUpdate }: ContentModerationProps) => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardHeader>
           <div className="flex justify-between items-center w-full">
             <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -135,7 +135,7 @@ const ContentModeration = ({ onContentUpdate }: ContentModerationProps) => {
       </Card>
 
       {/* Flagged Content Table */}
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-lg border-white/50 shadow-lg">
         <CardBody>
           {flaggedMusic.length === 0 ? (
             <div className="text-center py-8">
