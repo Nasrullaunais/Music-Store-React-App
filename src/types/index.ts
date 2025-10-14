@@ -107,15 +107,15 @@ export interface ReviewStats {
 export interface CartItem {
     id: number;
     music: Music;
-    price: number;
-    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
 }
 
 export interface Cart {
     id: number;
-    customerId: number;
+    customerUsername: string;
     items: CartItem[];
-    totalPrice: number;
+    total: number;
 }
 
 // Ticket System Types
@@ -178,4 +178,73 @@ export interface CreateTicketRequest {
 
 export interface AddMessageRequest {
   content: string;
+}
+
+// Order types
+export interface OrderItem {
+  id: number;
+  music: Music;
+  musicTitle: string;
+  artistName: string;
+  unitPrice: number;
+  subtotal: number;
+}
+
+export interface Order {
+  id: number;
+  customer: {
+    id: number;
+    username: string;
+  };
+  totalAmount: number;
+  orderDate: string;
+  status: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+  paymentMethod?: string;
+  orderItems: OrderItem[];
+}
+
+// Paginated response type for orders
+export interface PaginatedOrders {
+  content: Order[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+
+// Refund Request types
+export type RefundStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface RefundRequest {
+  id: number;
+  order: {
+    id: number;
+    totalAmount: number;
+    orderDate: string;
+    status: string;
+  };
+  customer: {
+    id: number;
+    username: string;
+  };
+  refundAmount: number;
+  reason: string;
+  status: RefundStatus;
+  requestDate: string;
+  processedDate?: string;
+  processedBy?: string;
+  adminNotes?: string;
+}
+
+export interface RefundEligibility {
+  orderId: number;
+  eligible: boolean;
+  message: string;
+}
+
+export interface CreateRefundRequest {
+  reason: string;
 }

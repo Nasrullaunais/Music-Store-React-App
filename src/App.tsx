@@ -10,6 +10,7 @@ import SupportPage from "@/pages/SupportPage.tsx";
 import StaffDashboard from "@/pages/StaffDashboard.tsx";
 import AdminDashboard from "@/pages/AdminDashboard.tsx";
 import ArtistDashboard from "@/pages/ArtistDashboard.tsx";
+import OrdersPage from "@/pages/OrdersPage.tsx";
 import { Navbar } from "./components/common/navbar.tsx";
 import {PurchasedMusic} from "@/pages/PurhcasedMusicPage.tsx";
 import ProtectedRoute from "./components/common/ProtectedRoutes.tsx";
@@ -30,6 +31,14 @@ function App() {
             <Route element={<ProfilePage />} path="/profile" />
             <Route element={<CartPage />} path="/cart" />
             <Route element={<PurchasedMusic />} path="/my-music" />
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['CUSTOMER']}>
+                  <OrdersPage />
+                </ProtectedRoute>
+              }
+              path="/orders"
+            />
             <Route
               element={
                 <ProtectedRoute allowedRoles={['CUSTOMER', 'ARTIST', 'STAFF', 'ADMIN']}>

@@ -128,7 +128,10 @@ const ReviewManagement = () => {
     );
   }
 
-  return (
+    const coverUrl = `http://localhost:8082`;
+
+  // @ts-ignore
+    return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -222,7 +225,7 @@ const ReviewManagement = () => {
               <CardBody>
                 <div className="flex items-center gap-4">
                   <img
-                    src={selectedMusic.imageUrl || '/placeholder-music.png'}
+                    src={coverUrl.concat(selectedMusic.imageUrl as string) || coverUrl.concat('/placeholder-music.png')}
                     alt={selectedMusic.name}
                     className="w-16 h-16 rounded-lg object-cover"
                   />

@@ -182,7 +182,7 @@ const CartPage: React.FC = () => {
                                         {/* Price and Actions */}
                                         <div className="flex-shrink-0 text-right">
                                             <div className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                                {formatPrice((item.price ?? item.music.price) * (item.quantity ?? 1))}
+                                                {formatPrice(item.unitPrice)}
                                             </div>
                                             <button
                                                 onClick={() => handleRemoveItem(item.id)}
@@ -208,12 +208,12 @@ const CartPage: React.FC = () => {
                                 <div className="space-y-3 mb-6">
                                     <div className="flex justify-between text-gray-600 dark:text-gray-400">
                                         <span>Items ({cart.items.length})</span>
-                                        <span>{formatPrice(cart.totalPrice)}</span>
+                                        <span>{formatPrice(cart.total)}</span>
                                     </div>
                                     <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
                                         <div className="flex justify-between text-lg font-semibold text-gray-900 dark:text-white">
                                             <span>Total</span>
-                                            <span>{formatPrice(cart.totalPrice)}</span>
+                                            <span>{formatPrice(cart.total)}</span>
                                         </div>
                                     </div>
                                 </div>

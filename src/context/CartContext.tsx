@@ -92,7 +92,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const clearCart = async () => {
         try {
             await cartApi.clearCart();
-            setCart(cart ? { ...cart, items: [], totalPrice: 0 } : null);
+            setCart(cart ? { ...cart, items: [], total: 0 } : null);
             toast.success('Cart cleared successfully');
         } catch (error: any) {
             console.error('Error clearing cart:', error);

@@ -34,6 +34,7 @@ import OrderManagement from '@/components/admin/OrderManagement';
 import TicketManagement from '@/components/admin/TicketManagement';
 import SystemManagement from '@/components/admin/SystemManagement';
 import UserRegistration from '@/components/admin/UserRegistration';
+import RefundManagement from '@/components/admin/RefundManagement';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -348,6 +349,18 @@ const AdminDashboard = () => {
               }
             >
               <UserRegistration />
+            </Tab>
+
+            <Tab
+              key="refunds"
+              title={
+                <div className="flex items-center space-x-2">
+                  <FiDollarSign />
+                  <span>Refund Management</span>
+                </div>
+              }
+            >
+              <RefundManagement />
             </Tab>
           </Tabs>
         </CardBody>

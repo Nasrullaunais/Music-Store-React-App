@@ -97,6 +97,7 @@ export const Navbar = () => {
       const items = [
         ...baseItems,
         { path: '/my-music', label: 'My Music', show: user?.role === 'CUSTOMER' },
+        { path: '/orders', label: 'Orders', show: user?.role === 'CUSTOMER' },
         { path: '/artist', label: 'Artist Dashboard', show: user?.role === 'ARTIST' },
         { path: '/staff', label: 'Staff Dashboard', show: user?.role === 'STAFF' || user?.role === 'ADMIN' },
         { path: '/support', label: 'Support', show: true },

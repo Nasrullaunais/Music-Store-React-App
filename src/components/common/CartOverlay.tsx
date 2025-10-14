@@ -12,12 +12,6 @@ interface CartOverlayProps {
 }
 
 const formatPrice = (price: number) => `$${price.toFixed(2)}`;
-const formatDuration = (duration?: number) => {
-  if (!duration) return 'Unknown';
-  const minutes = Math.floor(duration / 60);
-  const seconds = duration % 60;
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-};
 
 const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
   const { cart, loading, removeFromCart, clearCart, checkout } = useCart();
@@ -25,15 +19,6 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
   const [processing, setProcessing] = useState(false);
 
   if (!isOpen) return null;
-
-
-
-  // Compute total client-side to ensure it's always visible
-  const derivedTotal = cart?.items.reduce((sum, it) => {
-    const unit = (it.price ?? it.music.price) ?? 0;
-    const qty = it.quantity ?? 1;
-    return sum + unit * qty;
-  }, 0) ?? 0;
 
   const handleRemove = async (id: number) => {
     try {
@@ -55,10 +40,8 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
     try {
       setProcessing(true);
       await checkout();
-      // close on success
       onClose();
     } catch (err) {
-      // checkout handles toasts and errors
       console.error('Checkout error from overlay:', err);
     } finally {
       setProcessing(false);
@@ -154,18 +137,16 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
                             <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.music.name}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{item.music.artist}</p>
                           </div>
-                          <div className="text-sm text-right">
-                            <div className="font-medium text-gray-900 dark:text-white">{formatPrice((item.price ?? item.music.price) * (item.quantity ?? 1))}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">{formatPrice(item.price ?? item.music.price)} x {item.quantity ?? 1}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {formatPrice(item.unitPrice)}
                           </div>
                         </div>
                         <div className="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                           {item.music.genre && <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">{item.music.genre}</span>}
-                          {item.music.duration && <span>{formatDuration(item.music.duration)}</span>}
                           <button
                             onClick={() => handleRemove(item.id)}
                             disabled={removing.has(item.id)}
-                            className="ml-auto text-red-600 hover:text-red-800 dark:text-red-400 text-sm"
+                            className="ml-auto text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium"
                           >
                             {removing.has(item.id) ? 'Removing...' : 'Remove'}
                           </button>
@@ -180,8 +161,10 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
             {/* Footer */}
             <div className="px-5 py-4 border-t border-gray-100 dark:border-gray-800 bg-gradient-to-b from-white/60 dark:from-gray-900/60">
               <div className="flex items-center justify-between mb-3">
-                <div className="text-sm text-gray-600 dark:text-gray-400">Items</div>
-                <div className="text-lg font-semibold text-gray-900 dark:text-white">{formatPrice(derivedTotal)}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Total</div>
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {formatPrice(cart?.total ?? 0)}
+                </div>
               </div>
               <div className="space-y-2">
                 <Button
@@ -200,14 +183,15 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
                 >
                   Continue Shopping
                 </Button>
-
                 {cart && cart.items.length > 0 && (
-                  <button
-                    onClick={handleClear}
-                    className="w-full text-red-600 hover:text-red-800 dark:text-red-400 text-sm"
+                  <Button
+                    onPress={handleClear}
+                    variant="light"
+                    className="w-full text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    size="sm"
                   >
                     Clear Cart
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -218,6 +202,6 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isOpen, onClose }) => {
   );
 
   return createPortal(overlay, document.body);
-}
+};
 
 export default CartOverlay;
