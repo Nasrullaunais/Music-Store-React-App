@@ -14,8 +14,6 @@ import {
   Chip,
   Pagination,
   Spinner,
-  Modal,
-  ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
@@ -30,6 +28,7 @@ import {
   FiUser
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import AnimatedModal from './AnimatedModal';
 
 interface ContentModerationProps {
   onContentUpdate: () => void;
@@ -239,75 +238,73 @@ const ContentModeration = ({ onContentUpdate }: ContentModerationProps) => {
       </Card>
 
       {/* Confirmation Modal */}
-      <Modal
+      <AnimatedModal
         isOpen={isOpen}
         onClose={onClose}
         placement="top-center"
       >
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              {actionType === 'delete' ? (
-                <FiTrash2 className="text-danger" />
-              ) : (
-                <FiCheck className="text-success" />
-              )}
-              {actionType === 'delete' ? 'Delete Flagged Music' : 'Unflag Music'}
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            {selectedMusic && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 p-4 bg-default-50 rounded-lg">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
-                    <FiMusic className="text-primary text-xl" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">{selectedMusic.name}</p>
-                    <p className="text-small text-default-600">by {selectedMusic.artistUsername}</p>
-                    <p className="text-small text-default-500">Flagged on {formatDate(selectedMusic.flaggedAt)}</p>
-                  </div>
-                </div>
-
-                {actionType === 'delete' ? (
-                  <div className="bg-danger/10 border border-danger/20 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FiAlertTriangle className="text-danger" />
-                      <span className="font-semibold text-danger">Warning: Permanent Action</span>
-                    </div>
-                    <p className="text-small">
-                      This will permanently delete the music track from the system. This action cannot be undone.
-                      The music will be removed from all playlists and customer libraries.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="bg-success/10 border border-success/20 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FiCheck className="text-success" />
-                      <span className="font-semibold text-success">Unflag Content</span>
-                    </div>
-                    <p className="text-small">
-                      This will remove the flag and mark the content as reviewed and approved.
-                      The music will remain available on the platform.
-                    </p>
-                  </div>
-                )}
-              </div>
+        <ModalHeader className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            {actionType === 'delete' ? (
+              <FiTrash2 className="text-danger" />
+            ) : (
+              <FiCheck className="text-success" />
             )}
-          </ModalBody>
-          <ModalFooter>
-            <Button color="default" variant="flat" onPress={onClose}>
-              Cancel
-            </Button>
-            <Button
-              color={actionType === 'delete' ? 'danger' : 'success'}
-              onPress={confirmAction}
-            >
-              {actionType === 'delete' ? 'Delete Music' : 'Unflag Music'}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            {actionType === 'delete' ? 'Delete Flagged Music' : 'Unflag Music'}
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          {selectedMusic && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-4 bg-default-50 rounded-lg">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
+                  <FiMusic className="text-primary text-xl" />
+                </div>
+                <div>
+                  <p className="font-semibold">{selectedMusic.name}</p>
+                  <p className="text-small text-default-600">by {selectedMusic.artistUsername}</p>
+                  <p className="text-small text-default-500">Flagged on {formatDate(selectedMusic.flaggedAt)}</p>
+                </div>
+              </div>
+
+              {actionType === 'delete' ? (
+                <div className="bg-danger/10 border border-danger/20 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FiAlertTriangle className="text-danger" />
+                    <span className="font-semibold text-danger">Warning: Permanent Action</span>
+                  </div>
+                  <p className="text-small">
+                    This will permanently delete the music track from the system. This action cannot be undone.
+                    The music will be removed from all playlists and customer libraries.
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-success/10 border border-success/20 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FiCheck className="text-success" />
+                    <span className="font-semibold text-success">Unflag Content</span>
+                  </div>
+                  <p className="text-small">
+                    This will remove the flag and mark the content as reviewed and approved.
+                    The music will remain available on the platform.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="default" variant="flat" onPress={onClose}>
+            Cancel
+          </Button>
+          <Button
+            color={actionType === 'delete' ? 'danger' : 'success'}
+            onPress={confirmAction}
+          >
+            {actionType === 'delete' ? 'Delete Music' : 'Unflag Music'}
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
     </div>
   );
 };

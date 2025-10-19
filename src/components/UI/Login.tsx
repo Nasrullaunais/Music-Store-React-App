@@ -24,7 +24,7 @@ export default function Login({ onLogin, onSwitchToRegister }: LoginProps) {
 
     return (
         <div className="flex h-full w-full items-center justify-center">
-            <div className="rounded-large flex w-9/10 max-w-sm flex-col gap-4">
+            <div className="rounded-large flex w-9/10 max-w-sm flex-col gap-4 p-8">
                 <div className="flex flex-col items-center pb-6">
                     <img alt="logo" className="h-12 w-12 mb-5 accent-purple-800" src="/logo-dark.svg"/>
                     <p className="text-xl font-medium">Welcome Back</p>
@@ -39,8 +39,7 @@ export default function Login({ onLogin, onSwitchToRegister }: LoginProps) {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         classNames={{
-                            input: "bg-gray-800", // Change input background
-                            inputWrapper: "bg-violet-50", // Change wrapper background
+                            inputWrapper: "bg-purple-100/50 backdrop-blur-lg border-purple-300/50"
                         }}
                     />
                     <Input
@@ -66,10 +65,8 @@ export default function Login({ onLogin, onSwitchToRegister }: LoginProps) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         classNames={{
-                            input: "bg-gray-800", // Change input background
-                            inputWrapper: "bg-violet-50", // Change wrapper background
+                            inputWrapper: "bg-purple-100/50 backdrop-blur-lg border-purple-300/50"
                         }}
-
                     />
                     <div className="flex w-full items-center justify-between px-1 py-2 ">
                         <Checkbox name="remember" size="sm" color={ "primary" } defaultSelected={true}>

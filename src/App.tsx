@@ -23,7 +23,7 @@ function App() {
     const isAdminRoute = location.pathname === "/admin";
 
   return (
-      <div className={isAdminRoute ? "min-h-screen" : "flex flex-col items-center justify-start mt-25 min-h-screen"}>
+      <div className={isAdminRoute ? "min-h-screen" : `flex flex-col items-center justify-start ${!hideNavbar ? 'mt-25' : ''} min-h-screen`}>
         {!isAdminRoute && (
           <div className={"sticky top-0 z-50 rounded-large"}>
               {!hideNavbar && <Navbar />}

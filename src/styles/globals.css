@@ -2,13 +2,18 @@
 @config "../../tailwind.config.js";
 
 body, html, #root, #__next {
+    /*min-height: 100vh;*/
+    /*background: linear-gradient(135deg,*/
+    /*#d7bffe 0%,      !* Light lavender *!*/
+    /*#c7bae9 25%,     !* Soft purple *!*/
+    /*#c8b6ff 50%,     !* Medium purple *!*/
+    /*#b193fd 75%,     !* Vibrant purple *!*/
+    /*#d0c0f7 100%     !* Light purple-pink *!*/
+    /*);*/
+
+    background: radial-gradient(at top left, #cfafff, #f1dbdf, #d2d9f9, #b5a0ff, #cfafff);
     min-height: 100vh;
-    background: linear-gradient(135deg,
-    #d7bffe 0%,      /* Light lavender */
-    #c7bae9 25%,     /* Soft purple */ #c0acfb 50%,     /* Medium purple */
-    #b193fd 75%,     /* Vibrant purple */
-    #d0c0f7 100%     /* Light purple-pink */
-    );
+
     background-attachment: fixed;
     /* Alternative gradient options with different vibes: */
 

@@ -14,8 +14,6 @@ import {
   Chip,
   Pagination,
   Spinner,
-  Modal,
-  ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
@@ -33,6 +31,7 @@ import {
   FiAlertTriangle
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import AnimatedModal from './AnimatedModal';
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState<AdminOrder[]>([]);
@@ -133,6 +132,11 @@ const OrderManagement = () => {
                 selectedKeys={statusFilter ? [statusFilter] : []}
                 onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || '')}
                 className="max-w-xs"
+                classNames={{
+                  trigger: "bg-white/30 backdrop-blur-lg border-white/50 shadow-lg",
+                  listboxWrapper: "max-h-[300px]",
+                  popoverContent: "bg-white/90 border border-gray-200 shadow-2xl"
+                }}
                 aria-label="Filter orders by status"
               >
                 <SelectItem key="all">All Statuses</SelectItem>
@@ -273,112 +277,113 @@ const OrderManagement = () => {
       </Card>
 
       {/* Refund Confirmation Modal */}
-      <Modal
+      <AnimatedModal
         isOpen={isOpen}
         onClose={onClose}
         placement="top-center"
         size="lg"
       >
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <FiRefreshCw className="text-warning" />
-              Process Refund
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            {selectedOrder && (
-              <div className="space-y-4">
-                {/* Order Details */}
-                <div className="p-4 bg-default-50 rounded-lg">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="font-semibold">Order #{selectedOrder.id}</p>
-                      <p className="text-sm text-default-600">
-                        Customer: {(
-                          (selectedOrder as any).customer?.username ||
-                          (selectedOrder as any).customerUsername ||
-                          (selectedOrder as any).customerName ||
-                          'Unknown'
-                        )}
-                      </p>
-                      <p className="text-sm text-default-600">
-                        Date: {formatDate(selectedOrder.orderDate)}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-success">
-                        {formatCurrency(selectedOrder.totalAmount)}
-                      </p>
-                      <Chip color={getStatusColor(selectedOrder.status)} variant="flat" size="sm">
-                        {selectedOrder.status}
-                      </Chip>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-divider pt-3">
-                    <p className="font-medium mb-2">Order Items:</p>
-                    <div className="space-y-2">
-                      {(selectedOrder.items || []).map((item: any, index: number) => {
-                        const musicName = item.musicName || item.name || item.title || item.music?.name || item.music?.title || 'Unknown Track';
-                        const artistName = item.artistUsername || item.artist || item.music?.artist || item.music?.artistUsername || 'Unknown Artist';
-                        const price = typeof item.price === 'number' ? item.price : (item.music?.price || 0);
-                        return (
-                          <div key={index} className="flex justify-between items-center text-sm">
-                            <div className="flex items-center gap-2">
-                              <FiMusic className="text-primary" />
-                              <span>{musicName}</span>
-                              <span className="text-default-500">by {artistName}</span>
-                            </div>
-                            <span className="font-medium">{formatCurrency(price)}</span>
-                          </div>
-                        );
-                      })}
-                      {(!selectedOrder.items || selectedOrder.items.length === 0) && (
-                        <p className="text-sm text-default-500">No items found</p>
+        <ModalHeader className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <FiRefreshCw className="text-warning" />
+            Process Refund
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          {selectedOrder && (
+            <div className="space-y-4">
+              {/* Order Details */}
+              <div className="p-4 bg-default-50 rounded-lg">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <p className="font-semibold">Order #{selectedOrder.id}</p>
+                    <p className="text-sm text-default-600">
+                      Customer: {(
+                        (selectedOrder as any).customer?.username ||
+                        (selectedOrder as any).customerUsername ||
+                        (selectedOrder as any).customerName ||
+                        'Unknown'
                       )}
-                    </div>
+                    </p>
+                    <p className="text-sm text-default-600">
+                      Date: {formatDate(selectedOrder.orderDate)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-success">
+                      {formatCurrency(selectedOrder.totalAmount)}
+                    </p>
+                    <Chip color={getStatusColor(selectedOrder.status)} variant="flat" size="sm">
+                      {selectedOrder.status}
+                    </Chip>
                   </div>
                 </div>
 
-                {/* Refund Reason */}
-                <div>
-                  <Input
-                    label="Refund Reason"
-                    placeholder="Enter reason for refund (optional)"
-                    value={refundReason}
-                    onChange={(e) => setRefundReason(e.target.value)}
-                  />
-                </div>
-
-                <div className="bg-warning/10 border border-warning/20 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FiAlertTriangle className="text-warning" />
-                    <span className="font-semibold text-warning">Refund Information</span>
+                <div className="border-t border-divider pt-3">
+                  <p className="font-medium mb-2">Order Items:</p>
+                  <div className="space-y-2">
+                    {(selectedOrder.items || []).map((item: any, index: number) => {
+                      const musicName = item.musicName || item.name || item.title || item.music?.name || item.music?.title || 'Unknown Track';
+                      const artistName = item.artistUsername || item.artist || item.music?.artist || item.music?.artistUsername || 'Unknown Artist';
+                      const price = typeof item.price === 'number' ? item.price : (item.music?.price || 0);
+                      return (
+                        <div key={index} className="flex justify-between items-center text-sm">
+                          <div className="flex items-center gap-2">
+                            <FiMusic className="text-primary" />
+                            <span>{musicName}</span>
+                            <span className="text-default-500">by {artistName}</span>
+                          </div>
+                          <span className="font-medium">{formatCurrency(price)}</span>
+                        </div>
+                      );
+                    })}
+                    {(!selectedOrder.items || selectedOrder.items.length === 0) && (
+                      <p className="text-sm text-default-500">No items found</p>
+                    )}
                   </div>
-                  <p className="text-small">
-                    Processing this refund will:
-                  </p>
-                  <ul className="text-small mt-2 space-y-1 list-disc list-inside">
-                    <li>Refund {formatCurrency(selectedOrder.totalAmount)} to the customer</li>
-                    <li>Remove purchased music from customer's library</li>
-                    <li>Update order status to "REFUNDED"</li>
-                    <li>Send notification to the customer</li>
-                  </ul>
                 </div>
               </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button color="default" variant="flat" onPress={onClose}>
-              Cancel
-            </Button>
-            <Button color="warning" onPress={confirmRefund}>
-              Process Refund
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+
+              {/* Refund Reason */}
+              <div>
+                <Input
+                  label="Refund Reason"
+                  placeholder="Enter reason for refund (optional)"
+                  value={refundReason}
+                  onChange={(e) => setRefundReason(e.target.value)}
+                  classNames={{
+                    inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+                  }}
+                />
+              </div>
+
+              <div className="bg-warning/10 border border-warning/20 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiAlertTriangle className="text-warning" />
+                  <span className="font-semibold text-warning">Refund Information</span>
+                </div>
+                <p className="text-small">
+                  Processing this refund will:
+                </p>
+                <ul className="text-small mt-2 space-y-1 list-disc list-inside">
+                  <li>Refund {formatCurrency(selectedOrder.totalAmount)} to the customer</li>
+                  <li>Remove purchased music from customer's library</li>
+                  <li>Update order status to "REFUNDED"</li>
+                  <li>Send notification to the customer</li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="default" variant="flat" onPress={onClose}>
+            Cancel
+          </Button>
+          <Button color="warning" onPress={confirmRefund}>
+            Process Refund
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
     </div>
   );
 };

@@ -8,8 +8,6 @@ import {
   Input,
   Select,
   SelectItem,
-  Modal,
-  ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
@@ -33,6 +31,7 @@ import {
   FiUsers
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import AnimatedModal from './AnimatedModal';
 
 const UserManagement = () => {
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -215,13 +214,21 @@ const UserManagement = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               startContent={<FiSearch />}
-              className="max-w-xs bg-white/20 backdrop-blur-sm rounded-xl"
+              className="max-w-xs"
+              classNames={{
+                inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50 shadow-lg"
+              }}
             />
             <Select
               placeholder="Filter by role"
               selectedKeys={roleFilter ? [roleFilter] : []}
               onSelectionChange={(keys) => setRoleFilter(Array.from(keys)[0] as string || '')}
-              className="max-w-xs bg-white/20 backdrop-blur-sm rounded-xl"
+              className="max-w-xs"
+              classNames={{
+                trigger: "bg-white/30 backdrop-blur-lg border-white/50 shadow-lg",
+                listboxWrapper: "max-h-[300px]",
+                popoverContent: "bg-white/90 border border-gray-200 shadow-2xl"
+              }}
               aria-label="Filter users by role"
             >
               <SelectItem key="all">All Roles</SelectItem>
@@ -323,74 +330,92 @@ const UserManagement = () => {
       </Card>
 
       {/* Create/Edit User Modal */}
-      <Modal
+      <AnimatedModal
         isOpen={isOpen}
         onClose={onClose}
         placement="top-center"
         size="2xl"
       >
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            {isCreating ? 'Create New User' : `Edit User: ${selectedUser?.username}`}
-          </ModalHeader>
-          <ModalBody>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                autoFocus
-                label="Username"
-                placeholder="Enter username"
-                value={formData.username}
-                onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                isDisabled={!isCreating}
-              />
-              <Input
-                label="Email"
-                placeholder="Enter email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              />
-              <Input
-                label="Password"
-                placeholder={isCreating ? "Enter password" : "Leave blank to keep current"}
-                type="password"
-                value={formData.password}
-                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-              />
-              <Select
-                label="Role"
-                selectedKeys={[formData.role]}
-                onSelectionChange={(keys) => setFormData(prev => ({ ...prev, role: Array.from(keys)[0] as any }))}
-              >
-                <SelectItem key="CUSTOMER">Customer</SelectItem>
-                <SelectItem key="ARTIST">Artist</SelectItem>
-                <SelectItem key="STAFF">Staff</SelectItem>
-                <SelectItem key="ADMIN">Admin</SelectItem>
-              </Select>
-              <Input
-                label="First Name"
-                placeholder="Enter first name (optional)"
-                value={formData.firstName}
-                onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-              />
-              <Input
-                label="Last Name"
-                placeholder="Enter last name (optional)"
-                value={formData.lastName}
-                onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="danger" variant="flat" onPress={onClose}>
-              Cancel
-            </Button>
-            <Button color="primary" onPress={handleSubmit}>
-              {isCreating ? 'Create User' : 'Update User'}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        <ModalHeader className="flex flex-col gap-1">
+          {isCreating ? 'Create New User' : `Edit User: ${selectedUser?.username}`}
+        </ModalHeader>
+        <ModalBody>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              autoFocus
+              label="Username"
+              placeholder="Enter username"
+              value={formData.username}
+              onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+              isDisabled={!isCreating}
+              classNames={{
+                inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+              }}
+            />
+            <Input
+              label="Email"
+              placeholder="Enter email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              classNames={{
+                inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+              }}
+            />
+            <Input
+              label="Password"
+              placeholder={isCreating ? "Enter password" : "Leave blank to keep current"}
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+              classNames={{
+                inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+              }}
+            />
+            <Select
+              label="Role"
+              selectedKeys={[formData.role]}
+              onSelectionChange={(keys) => setFormData(prev => ({ ...prev, role: Array.from(keys)[0] as any }))}
+              classNames={{
+                trigger: "bg-white/30 backdrop-blur-lg border-white/50",
+                listboxWrapper: "max-h-[300px]",
+                popoverContent: "bg-white/90 border border-gray-200 shadow-2xl"
+              }}
+            >
+              <SelectItem key="CUSTOMER">Customer</SelectItem>
+              <SelectItem key="ARTIST">Artist</SelectItem>
+              <SelectItem key="STAFF">Staff</SelectItem>
+              <SelectItem key="ADMIN">Admin</SelectItem>
+            </Select>
+            <Input
+              label="First Name"
+              placeholder="Enter first name (optional)"
+              value={formData.firstName}
+              onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+              classNames={{
+                inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+              }}
+            />
+            <Input
+              label="Last Name"
+              placeholder="Enter last name (optional)"
+              value={formData.lastName}
+              onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+              classNames={{
+                inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+              }}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="danger" variant="flat" onPress={onClose}>
+            Cancel
+          </Button>
+          <Button color="primary" onPress={handleSubmit}>
+            {isCreating ? 'Create User' : 'Update User'}
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
     </div>
   );
 };

@@ -14,8 +14,6 @@ import {
   Chip,
   Pagination,
   Spinner,
-  Modal,
-  ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
@@ -30,6 +28,7 @@ import {
   FiCheckCircle
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import AnimatedModal from './AnimatedModal';
 
 const TicketManagement = () => {
   const [tickets, setTickets] = useState<AdminTicket[]>([]);
@@ -345,86 +344,94 @@ const TicketManagement = () => {
       </Card>
 
       {/* Action Modal */}
-      <Modal
+      <AnimatedModal
         isOpen={isOpen}
         onClose={onClose}
         placement="top-center"
       >
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
+        <ModalHeader className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            {actionType === 'assign' ? (
+              <>
+                <FiUserCheck className="text-primary" />
+                Assign Ticket
+              </>
+            ) : (
+              <>
+                <FiCheckCircle className="text-secondary" />
+                Update Status
+              </>
+            )}
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          {selectedTicket && (
+            <div className="space-y-4">
+              {/* Ticket Details */}
+              <div className="p-4 bg-default-50 rounded-lg">
+                <p className="font-semibold">{selectedTicket.subject}</p>
+                <div className="flex items-center gap-4 mt-2 text-sm text-default-600">
+                  <span>ID: {selectedTicket.id}</span>
+                  <span>Customer: {selectedTicket.customerUsername}</span>
+                  <span>Created: {formatDate(selectedTicket.createdAt)}</span>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <Chip color={getStatusColor(selectedTicket.status)} variant="flat" size="sm">
+                    {selectedTicket.status.replace('_', ' ')}
+                  </Chip>
+                  <Chip color={getPriorityColor(selectedTicket.priority)} variant="flat" size="sm">
+                    {selectedTicket.priority}
+                  </Chip>
+                </div>
+              </div>
+
               {actionType === 'assign' ? (
-                <>
-                  <FiUserCheck className="text-primary" />
-                  Assign Ticket
-                </>
+                <Select
+                  label="Assign to Staff"
+                  placeholder="Select staff member"
+                  selectedKeys={assignStaffId ? [assignStaffId] : []}
+                  onSelectionChange={(keys) => setAssignStaffId(Array.from(keys)[0] as string)}
+                  classNames={{
+                    trigger: "bg-white/30 backdrop-blur-lg border-white/50",
+                    listboxWrapper: "max-h-[300px]",
+                    popoverContent: "bg-white/90 border border-gray-200 shadow-2xl"
+                  }}
+                >
+                  {staffOptions}
+                </Select>
               ) : (
-                <>
-                  <FiCheckCircle className="text-secondary" />
-                  Update Status
-                </>
+                <Select
+                  label="New Status"
+                  selectedKeys={[newStatus]}
+                  onSelectionChange={(keys) => setNewStatus(Array.from(keys)[0] as string)}
+                  classNames={{
+                    trigger: "bg-white/30 backdrop-blur-lg border-white/50",
+                    listboxWrapper: "max-h-[300px]",
+                    popoverContent: "bg-white/90 border border-gray-200 shadow-2xl"
+                  }}
+                >
+                  <SelectItem key="OPEN">Open</SelectItem>
+                  <SelectItem key="IN_PROGRESS">In Progress</SelectItem>
+                  <SelectItem key="URGENT">Urgent</SelectItem>
+                  <SelectItem key="CLOSED">Closed</SelectItem>
+                </Select>
               )}
             </div>
-          </ModalHeader>
-          <ModalBody>
-            {selectedTicket && (
-              <div className="space-y-4">
-                {/* Ticket Details */}
-                <div className="p-4 bg-default-50 rounded-lg">
-                  <p className="font-semibold">{selectedTicket.subject}</p>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-default-600">
-                    <span>ID: {selectedTicket.id}</span>
-                    <span>Customer: {selectedTicket.customerUsername}</span>
-                    <span>Created: {formatDate(selectedTicket.createdAt)}</span>
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <Chip color={getStatusColor(selectedTicket.status)} variant="flat" size="sm">
-                      {selectedTicket.status.replace('_', ' ')}
-                    </Chip>
-                    <Chip color={getPriorityColor(selectedTicket.priority)} variant="flat" size="sm">
-                      {selectedTicket.priority}
-                    </Chip>
-                  </div>
-                </div>
-
-                {actionType === 'assign' ? (
-                  <Select
-                    label="Assign to Staff"
-                    placeholder="Select staff member"
-                    selectedKeys={assignStaffId ? [assignStaffId] : []}
-                    onSelectionChange={(keys) => setAssignStaffId(Array.from(keys)[0] as string)}
-                  >
-                    {staffOptions}
-                  </Select>
-                ) : (
-                  <Select
-                    label="New Status"
-                    selectedKeys={[newStatus]}
-                    onSelectionChange={(keys) => setNewStatus(Array.from(keys)[0] as string)}
-                  >
-                    <SelectItem key="OPEN">Open</SelectItem>
-                    <SelectItem key="IN_PROGRESS">In Progress</SelectItem>
-                    <SelectItem key="URGENT">Urgent</SelectItem>
-                    <SelectItem key="CLOSED">Closed</SelectItem>
-                  </Select>
-                )}
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button color="default" variant="flat" onPress={onClose}>
-              Cancel
-            </Button>
-            <Button
-              color={actionType === 'assign' ? 'primary' : 'secondary'}
-              onPress={confirmAction}
-              isDisabled={actionType === 'assign' ? !assignStaffId : false}
-            >
-              {actionType === 'assign' ? 'Assign Ticket' : 'Update Status'}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="default" variant="flat" onPress={onClose}>
+            Cancel
+          </Button>
+          <Button
+            color={actionType === 'assign' ? 'primary' : 'secondary'}
+            onPress={confirmAction}
+            isDisabled={actionType === 'assign' ? !assignStaffId : false}
+          >
+            {actionType === 'assign' ? 'Assign Ticket' : 'Update Status'}
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
     </div>
   );
 };

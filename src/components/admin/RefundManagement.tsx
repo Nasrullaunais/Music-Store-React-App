@@ -8,8 +8,6 @@ import {
   Button,
   Chip,
   Spinner,
-  Modal,
-  ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
@@ -33,6 +31,7 @@ import {
   FiEye,
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import AnimatedModal from './AnimatedModal';
 
 const RefundManagement = () => {
   const [refunds, setRefunds] = useState<RefundRequest[]>([]);
@@ -368,190 +367,187 @@ const RefundManagement = () => {
       </Card>
 
       {/* Detail Modal */}
-      <Modal
+      <AnimatedModal
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
         size="2xl"
       >
-        <ModalContent>
-          <ModalHeader>
-            <h3 className="text-xl font-bold">Refund Request Details</h3>
-          </ModalHeader>
-          <ModalBody>
-            {selectedRefund && (
-              <div className="space-y-4">
+        <ModalHeader>
+          <h3 className="text-xl font-bold">Refund Request Details</h3>
+        </ModalHeader>
+        <ModalBody>
+          {selectedRefund && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Refund ID</p>
+                  <p className="font-semibold">#{selectedRefund.id}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
+                  <Chip color={getStatusColor(selectedRefund.status)} variant="flat" size="sm">
+                    {selectedRefund.status}
+                  </Chip>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Order ID</p>
+                  <p className="font-semibold">#{selectedRefund.order.id}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Customer</p>
+                  <p className="font-semibold">{selectedRefund.customer.username}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Refund Amount</p>
+                  <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+                    {formatCurrency(selectedRefund.refundAmount)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Request Date</p>
+                  <p className="font-semibold">{formatDate(selectedRefund.requestDate)}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Customer Reason</p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                  <p className="text-sm">{selectedRefund.reason}</p>
+                </div>
+              </div>
+
+              {selectedRefund.processedBy && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Refund ID</p>
-                    <p className="font-semibold">#{selectedRefund.id}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Processed By</p>
+                    <p className="font-semibold">{selectedRefund.processedBy}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
-                    <Chip color={getStatusColor(selectedRefund.status)} variant="flat" size="sm">
-                      {selectedRefund.status}
-                    </Chip>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Order ID</p>
-                    <p className="font-semibold">#{selectedRefund.order.id}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Customer</p>
-                    <p className="font-semibold">{selectedRefund.customer.username}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Refund Amount</p>
-                    <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                      {formatCurrency(selectedRefund.refundAmount)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Request Date</p>
-                    <p className="font-semibold">{formatDate(selectedRefund.requestDate)}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Customer Reason</p>
-                  <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                    <p className="text-sm">{selectedRefund.reason}</p>
-                  </div>
-                </div>
-
-                {selectedRefund.processedBy && (
-                  <div className="grid grid-cols-2 gap-4">
+                  {selectedRefund.processedDate && (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Processed By</p>
-                      <p className="font-semibold">{selectedRefund.processedBy}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Processed Date</p>
+                      <p className="font-semibold">{formatDate(selectedRefund.processedDate)}</p>
                     </div>
-                    {selectedRefund.processedDate && (
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Processed Date</p>
-                        <p className="font-semibold">{formatDate(selectedRefund.processedDate)}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
+              )}
 
-                {selectedRefund.adminNotes && (
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Admin Notes</p>
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                      <p className="text-sm">{selectedRefund.adminNotes}</p>
-                    </div>
+              {selectedRefund.adminNotes && (
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Admin Notes</p>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                    <p className="text-sm">{selectedRefund.adminNotes}</p>
                   </div>
-                )}
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={() => setIsDetailModalOpen(false)}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+                </div>
+              )}
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="light" onPress={() => setIsDetailModalOpen(false)}>
+            Close
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
 
       {/* Approve Modal */}
-      <Modal isOpen={isApproveModalOpen} onClose={() => setIsApproveModalOpen(false)}>
-        <ModalContent>
-          <ModalHeader>
-            <h3 className="text-xl font-bold">Approve Refund Request</h3>
-          </ModalHeader>
-          <ModalBody>
-            {selectedRefund && (
-              <div className="space-y-4">
-                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <FiCheckCircle className="text-green-600 dark:text-green-400 flex-shrink-0 mt-1" />
-                    <div className="text-sm text-green-800 dark:text-green-200">
-                      <p className="font-semibold mb-1">Confirm Approval</p>
-                      <p>
-                        You are about to approve a refund of {formatCurrency(selectedRefund.refundAmount)} for order #{selectedRefund.order.id}.
-                        The order status will be changed to CANCELLED.
-                      </p>
-                    </div>
+      <AnimatedModal isOpen={isApproveModalOpen} onClose={() => setIsApproveModalOpen(false)}>
+        <ModalHeader>
+          <h3 className="text-xl font-bold">Approve Refund Request</h3>
+        </ModalHeader>
+        <ModalBody>
+          {selectedRefund && (
+            <div className="space-y-4">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <FiCheckCircle className="text-green-600 dark:text-green-400 flex-shrink-0 mt-1" />
+                  <div className="text-sm text-green-800 dark:text-green-200">
+                    <p className="font-semibold mb-1">Confirm Approval</p>
+                    <p>
+                      You are about to approve a refund of {formatCurrency(selectedRefund.refundAmount)} for order #{selectedRefund.order.id}.
+                      The order status will be changed to CANCELLED.
+                    </p>
                   </div>
                 </div>
-
-                <Textarea
-                  label="Admin Notes (Optional)"
-                  placeholder="Add any notes about this approval..."
-                  value={adminNotes}
-                  onChange={(e) => setAdminNotes(e.target.value)}
-                  minRows={3}
-                  maxLength={1000}
-                />
               </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={() => setIsApproveModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              color="success"
-              onPress={confirmApprove}
-              isLoading={processing}
-              startContent={<FiCheckCircle />}
-            >
-              Approve Refund
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+
+              <Textarea
+                label="Admin Notes (Optional)"
+                placeholder="Add any notes about this approval..."
+                value={adminNotes}
+                onChange={(e) => setAdminNotes(e.target.value)}
+                minRows={3}
+                maxLength={1000}
+              />
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="light" onPress={() => setIsApproveModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button
+            color="success"
+            onPress={confirmApprove}
+            isLoading={processing}
+            startContent={<FiCheckCircle />}
+          >
+            Approve Refund
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
 
       {/* Reject Modal */}
-      <Modal isOpen={isRejectModalOpen} onClose={() => setIsRejectModalOpen(false)}>
-        <ModalContent>
-          <ModalHeader>
-            <h3 className="text-xl font-bold">Reject Refund Request</h3>
-          </ModalHeader>
-          <ModalBody>
-            {selectedRefund && (
-              <div className="space-y-4">
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <FiXCircle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-1" />
-                    <div className="text-sm text-red-800 dark:text-red-200">
-                      <p className="font-semibold mb-1">Confirm Rejection</p>
-                      <p>
-                        You are about to reject a refund request for order #{selectedRefund.order.id}.
-                        Please provide a reason for the customer.
-                      </p>
-                    </div>
+      <AnimatedModal isOpen={isRejectModalOpen} onClose={() => setIsRejectModalOpen(false)}>
+        <ModalHeader>
+          <h3 className="text-xl font-bold">Reject Refund Request</h3>
+        </ModalHeader>
+        <ModalBody>
+          {selectedRefund && (
+            <div className="space-y-4">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <FiXCircle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-1" />
+                  <div className="text-sm text-red-800 dark:text-red-200">
+                    <p className="font-semibold mb-1">Confirm Rejection</p>
+                    <p>
+                      You are about to reject a refund request for order #{selectedRefund.order.id}.
+                      Please provide a reason for the customer.
+                    </p>
                   </div>
                 </div>
-
-                <Textarea
-                  label="Reason for Rejection (Required)"
-                  placeholder="Explain why this refund request is being rejected..."
-                  value={adminNotes}
-                  onChange={(e) => setAdminNotes(e.target.value)}
-                  minRows={3}
-                  maxLength={1000}
-                  isRequired
-                  errorMessage={adminNotes.trim() ? '' : 'Reason is required for rejection'}
-                />
               </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={() => setIsRejectModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              color="danger"
-              onPress={confirmReject}
-              isLoading={processing}
-              isDisabled={!adminNotes.trim()}
-              startContent={<FiXCircle />}
-            >
-              Reject Refund
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+
+              <Textarea
+                label="Reason for Rejection (Required)"
+                placeholder="Explain why this refund request is being rejected..."
+                value={adminNotes}
+                onChange={(e) => setAdminNotes(e.target.value)}
+                minRows={3}
+                maxLength={1000}
+                isRequired
+                errorMessage={adminNotes.trim() ? '' : 'Reason is required for rejection'}
+                classNames={{
+                  inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+                }}
+              />
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="light" onPress={() => setIsRejectModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button
+            color="danger"
+            onPress={confirmReject}
+            isLoading={processing}
+            isDisabled={!adminNotes.trim()}
+            startContent={<FiXCircle />}
+          >
+            Reject Refund
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
     </div>
   );
 };

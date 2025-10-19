@@ -14,8 +14,6 @@ import {
   Chip,
   Pagination,
   Spinner,
-  Modal,
-  ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
@@ -33,6 +31,7 @@ import {
 import { toast } from 'react-toastify';
 import { fetchMusicById } from '@/api/musicApi.ts';
 import { Music } from '@/types';
+import AnimatedModal from './AnimatedModal';
 
 const ReviewManagement = () => {
   const [reviews, setReviews] = useState<AdminReview[]>([]);
@@ -242,7 +241,12 @@ const ReviewManagement = () => {
                 setSortBy(selected);
                 setPage(1); // Reset to first page when sort changes
               }}
-              className="min-w-[180px] max-w-[200px] bg-white/40 backdrop-blur-md bg-opacity-75 rounded-xl"
+              className="min-w-[180px] max-w-[200px]"
+              classNames={{
+                trigger: "bg-white/30 backdrop-blur-lg border-white/50 shadow-lg",
+                listboxWrapper: "max-h-[300px]",
+                popoverContent: "bg-white/90 border border-gray-200 shadow-2xl"
+              }}
               aria-label="Sort reviews by criteria"
               variant="flat"
             >
@@ -422,71 +426,69 @@ const ReviewManagement = () => {
       </Card>
 
       {/* Delete Confirmation Modal */}
-      <Modal
+      <AnimatedModal
         isOpen={isOpen}
         onClose={onClose}
         placement="top-center"
       >
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <FiTrash2 className="text-danger" />
-              Delete Review
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            {selectedReview && (
-              <div className="space-y-4">
-                <div className="p-4 bg-default-50 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex items-center gap-1">
-                      {renderStars(selectedReview.rating)}
-                    </div>
-                    <Chip
-                      color={getRatingColor(selectedReview.rating)}
-                      variant="flat"
-                      size="sm"
-                    >
-                      {selectedReview.rating}/5
-                    </Chip>
+        <ModalHeader className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <FiTrash2 className="text-danger" />
+            Delete Review
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          {selectedReview && (
+            <div className="space-y-4">
+              <div className="p-4 bg-default-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-1">
+                    {renderStars(selectedReview.rating)}
                   </div>
-                  <p className="text-sm mb-2">"{selectedReview.comment}"</p>
-                  <div className="flex items-center justify-between text-xs text-default-600">
-                    <span>by {getCustomerDisplay(selectedReview)}</span>
-                    <span>{formatDate(selectedReview.createdAt)}</span>
-                  </div>
-                  <div className="mt-2 pt-2 border-t border-divider">
-                    <div className="flex items-center gap-2">
-                      <FiMusic className="text-primary" />
-                      <span className="text-sm font-medium">{getMusicForReview(selectedReview)?.name || `#${selectedReview.musicId ?? (selectedReview as any).music?.id}`}</span>
-                      <span className="text-xs text-default-500">by {getMusicForReview(selectedReview)?.artist || (selectedReview as any).music?.artist || 'Unknown'}</span>
-                    </div>
-                  </div>
+                  <Chip
+                    color={getRatingColor(selectedReview.rating)}
+                    variant="flat"
+                    size="sm"
+                  >
+                    {selectedReview.rating}/5
+                  </Chip>
                 </div>
-
-                <div className="bg-danger/10 border border-danger/20 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FiAlertTriangle className="text-danger" />
-                    <span className="font-semibold text-danger">Warning: Permanent Action</span>
+                <p className="text-sm mb-2">"{selectedReview.comment}"</p>
+                <div className="flex items-center justify-between text-xs text-default-600">
+                  <span>by {getCustomerDisplay(selectedReview)}</span>
+                  <span>{formatDate(selectedReview.createdAt)}</span>
+                </div>
+                <div className="mt-2 pt-2 border-t border-divider">
+                  <div className="flex items-center gap-2">
+                    <FiMusic className="text-primary" />
+                    <span className="text-sm font-medium">{getMusicForReview(selectedReview)?.name || `#${selectedReview.musicId ?? (selectedReview as any).music?.id}`}</span>
+                    <span className="text-xs text-default-500">by {getMusicForReview(selectedReview)?.artist || (selectedReview as any).music?.artist || 'Unknown'}</span>
                   </div>
-                  <p className="text-small">
-                    This will permanently delete the review from the system. This action cannot be undone.
-                    The music's rating will be automatically recalculated after deletion.
-                  </p>
                 </div>
               </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button color="default" variant="flat" onPress={onClose}>
-              Cancel
-            </Button>
-            <Button color="danger" onPress={confirmDelete}>
-              Delete Review
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+
+              <div className="bg-danger/10 border border-danger/20 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiAlertTriangle className="text-danger" />
+                  <span className="font-semibold text-danger">Warning: Permanent Action</span>
+                </div>
+                <p className="text-small">
+                  This will permanently delete the review from the system. This action cannot be undone.
+                  The music's rating will be automatically recalculated after deletion.
+                </p>
+              </div>
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="default" variant="flat" onPress={onClose}>
+            Cancel
+          </Button>
+          <Button color="danger" onPress={confirmDelete}>
+            Delete Review
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
     </div>
   );
 };
