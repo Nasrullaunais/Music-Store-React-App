@@ -25,10 +25,12 @@ import {
   FiMessageSquare,
   FiUser,
   FiUserCheck,
-  FiCheckCircle
+  FiCheckCircle,
+  FiEye
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import AnimatedModal from './AnimatedModal';
+import TicketChatOverlay from './TicketChatOverlay';
 
 const TicketManagement = () => {
   const [tickets, setTickets] = useState<AdminTicket[]>([]);
@@ -41,6 +43,8 @@ const TicketManagement = () => {
   const [staffList, setStaffList] = useState<AdminUser[]>([]);
   const [newStatus, setNewStatus] = useState('');
   const [actionType, setActionType] = useState<'assign' | 'status'>('assign');
+  const [chatTicket, setChatTicket] = useState<AdminTicket | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -341,6 +345,18 @@ const TicketManagement = () => {
                       >
                         Status
                       </Button>
+                      <Button
+                        size="sm"
+                        color="default"
+                        variant="flat"
+                        startContent={<FiEye />}
+                        onPress={() => {
+                          setChatTicket(ticket);
+                          setIsChatOpen(true);
+                        }}
+                      >
+                        Chat
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -439,6 +455,16 @@ const TicketManagement = () => {
           </Button>
         </ModalFooter>
       </AnimatedModal>
+
+      {/* Chat Overlay */}
+      {chatTicket && (
+        <TicketChatOverlay
+          ticket={chatTicket}
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          onTicketUpdate={loadTickets}
+        />
+      )}
     </div>
   );
 };

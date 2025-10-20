@@ -248,3 +248,49 @@ export interface RefundEligibility {
 export interface CreateRefundRequest {
   reason: string;
 }
+
+// Audit Log types
+export interface AuditLog {
+  id: number;
+  adminUsername: string;
+  action: string;
+  resourceType: string;
+  resourceId: number | null;
+  details: string;
+  success: boolean;
+  errorMessage: string | null;
+  ipAddress: string;
+  userAgent: string;
+  sessionId: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  timestamp: string;
+}
+
+export interface AuditLogPage {
+  content: AuditLog[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  pageable: {
+    sort: {
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+    pageNumber: number;
+    pageSize: number;
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  sort: {
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
+  };
+  numberOfElements: number;
+  empty: boolean;
+}

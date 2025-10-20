@@ -279,7 +279,14 @@ const RefundManagement = () => {
             </div>
           ) : (
             <>
-              <Table aria-label="Refund requests table">
+              <Table
+                aria-label="Refund requests table"
+                classNames={{
+                  wrapper: "bg-white/20 backdrop-blur-sm",
+                  th: "bg-white/40 backdrop-blur-md",
+                  td: "bg-white/10"
+                }}
+              >
                 <TableHeader>
                   <TableColumn>ID</TableColumn>
                   <TableColumn>CUSTOMER</TableColumn>

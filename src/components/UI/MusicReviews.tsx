@@ -24,6 +24,7 @@ import {
     getUserReviewForMusic 
 } from '@/api/reviewsApi.ts';
 import { toast } from 'react-toastify';
+import { containsCensoredWords } from '@/utils/profanityFilter';
 
 interface MusicReviewsProps {
     musicId: number;
@@ -143,6 +144,12 @@ const MusicReviews: React.FC<MusicReviewsProps> = ({
     const handleSubmitReview = async () => {
         if (!modalComment.trim()) {
             toast.error('Please add a comment to your review');
+            return;
+        }
+
+        // Validate for profanity/bad words
+        if (containsCensoredWords(modalComment)) {
+            toast.error('Your review contains inappropriate language. Please revise your comment.');
             return;
         }
 

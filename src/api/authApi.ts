@@ -9,6 +9,26 @@ export interface BanErrorResponse {
     timestamp?: string;
 }
 
+// Password Reset Types
+export interface ForgotPasswordRequest {
+    email: string;
+}
+
+export interface ResetPasswordRequest {
+    token: string;
+    newPassword: string;
+}
+
+export interface PasswordResetResponse {
+    message: string;
+    success: boolean;
+}
+
+export interface TokenValidationResponse {
+    valid: boolean;
+    message: string;
+}
+
 export const registerUser = async (userData: RegisterData): Promise<User> => {
     try{
         const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, userData);
@@ -48,5 +68,36 @@ export const getCurrentUser = async (): Promise<User> => {
         return response.data;
     } catch (error: any){
         throw new Error(error.response?.data?.message || 'Failed to fetch user');
+    }
+}
+
+// Password Reset Functions
+export const forgotPassword = async (email: string): Promise<PasswordResetResponse> => {
+    try {
+        const response = await api.post('/api/password/forgot', { email });
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || 'Failed to send reset email');
+    }
+}
+
+export const resetPassword = async (token: string, newPassword: string): Promise<PasswordResetResponse> => {
+    try {
+        const response = await api.post('/api/password/reset', { token, newPassword });
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || 'Failed to reset password');
+    }
+}
+
+export const validateResetToken = async (token: string): Promise<TokenValidationResponse> => {
+    try {
+        const response = await api.get(`/api/password/validate-token?token=${token}`);
+        return response.data;
+    } catch (error: any) {
+        return {
+            valid: false,
+            message: error.response?.data?.message || 'Failed to validate token'
+        };
     }
 }

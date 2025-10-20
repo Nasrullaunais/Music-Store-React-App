@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { ticketAPI } from '../api/ticketsApi.ts';
 import { Ticket, TicketMessage } from '@/types';
 import { useAuth } from '@/context/AuthContext';
+import { containsCensoredWords } from '@/utils/profanityFilter';
 
 const SupportPage: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -76,6 +77,17 @@ const SupportPage: React.FC = () => {
       return;
     }
 
+    // Validate for profanity/bad words in subject and description
+    if (containsCensoredWords(createTicketForm.subject)) {
+      toast.error('The ticket subject contains inappropriate language. Please revise it.');
+      return;
+    }
+
+    if (containsCensoredWords(createTicketForm.description)) {
+      toast.error('The ticket description contains inappropriate language. Please revise it.');
+      return;
+    }
+
     try {
       setLoading(true);
       const newTicket = await ticketAPI.createTicket(createTicketForm);
@@ -99,6 +111,12 @@ const SupportPage: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedTicket) return;
+
+    // Validate for profanity/bad words in the message
+    if (containsCensoredWords(newMessage)) {
+      toast.error('Your message contains inappropriate language. Please revise it.');
+      return;
+    }
 
     try {
       setLoading(true);

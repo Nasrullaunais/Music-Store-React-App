@@ -1,5 +1,5 @@
 import { apiClient } from '@/services/api';
-import {Music} from "@/types";
+import {Music, AuditLogPage} from "@/types";
 
 export interface AdminUser {
   id: number;
@@ -43,6 +43,12 @@ export interface AdminRegistrationRequest {
   email: string;
   firstName: string;
   lastName: string;
+}
+
+export interface AdminResetPasswordRequest {
+  email: string;
+  userType: 'CUSTOMER' | 'STAFF' | 'ADMIN';
+  newPassword: string;
 }
 
 export interface BanRequest {
@@ -123,6 +129,21 @@ export interface MonthlySalesData {
   averageOrderValue: number;
   topProducts: TopProduct[];
   dailySales: DailySales[];
+}
+
+export interface TicketMessage {
+  id: number;
+  content: string;
+  timestamp: string;
+  ticketId: number;
+  fromStaff: boolean;
+  customerName: string | null;
+  staffName: string | null;
+  adminName: string | null;
+}
+
+export interface TicketReplyRequest {
+  message: string;
 }
 
 export interface StaffUser {
@@ -493,6 +514,53 @@ export const adminAPI = {
     const response = await apiClient.get(`/api/admin/reports/sales/monthly/data`, {
       params: { year, month }
     });
+    return response.data;
+  },
+
+  // Ticket Messages and Replies
+  async getTicketMessages(ticketId: number): Promise<TicketMessage[]> {
+    const response = await apiClient.get(`/api/admin/tickets/${ticketId}/messages`);
+    return response.data;
+  },
+
+  async replyToTicket(ticketId: number, message: string): Promise<TicketMessage> {
+    const response = await apiClient.post(`/api/admin/tickets/${ticketId}/reply`, { message });
+    return response.data;
+  },
+
+  async getTicketById(ticketId: number): Promise<AdminTicket> {
+    const response = await apiClient.get(`/api/admin/tickets/${ticketId}`);
+    return response.data;
+  },
+
+  async closeTicket(ticketId: number): Promise<AdminTicket> {
+    const response = await apiClient.post(`/api/admin/tickets/${ticketId}/close`);
+    return response.data;
+  },
+
+  // Audit Logs
+  async getAuditLogs(
+    page = 0,
+    size = 20,
+    adminUsername?: string,
+    action?: string,
+    resourceType?: string
+  ): Promise<AuditLogPage> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString()
+    });
+    if (adminUsername) params.append('adminUsername', adminUsername);
+    if (action) params.append('action', action);
+    if (resourceType) params.append('resourceType', resourceType);
+
+    const response = await apiClient.get(`/api/admin/audit-logs?${params}`);
+    return response.data;
+  },
+
+  // Password Reset (Admin)
+  async resetUserPassword(resetData: AdminResetPasswordRequest): Promise<{ message: string; success: boolean }> {
+    const response = await apiClient.post('/api/admin/users/reset-password', resetData);
     return response.data;
   },
 };

@@ -11,6 +11,8 @@ import StaffDashboard from "@/pages/StaffDashboard.tsx";
 import AdminDashboard from "@/pages/AdminDashboard.tsx";
 import ArtistDashboard from "@/pages/ArtistDashboard.tsx";
 import OrdersPage from "@/pages/OrdersPage.tsx";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage.tsx";
+import ResetPasswordPage from "@/pages/ResetPasswordPage.tsx";
 import { Navbar } from "./components/common/navbar.tsx";
 import {PurchasedMusic} from "@/pages/PurhcasedMusicPage.tsx";
 import ProtectedRoute from "./components/common/ProtectedRoutes.tsx";
@@ -18,7 +20,7 @@ import ProtectedRoute from "./components/common/ProtectedRoutes.tsx";
 function App() {
     const location = useLocation();
 
-    const authRoutes = ["/auth", "/admin"];
+    const authRoutes = ["/auth", "/admin", "/forgot-password", "/reset-password"];
     const hideNavbar = authRoutes.includes(location.pathname);
     const isAdminRoute = location.pathname === "/admin";
 
@@ -32,6 +34,8 @@ function App() {
         <Routes>
             <Route element={<HomePage />} path="/" />
             <Route element={<AuthPage />} path="/auth" />
+            <Route element={<ForgotPasswordPage />} path="/forgot-password" />
+            <Route element={<ResetPasswordPage />} path="/reset-password" />
             <Route element={<ProfilePage />} path="/profile" />
             <Route element={<CartPage />} path="/cart" />
             <Route element={<PurchasedMusic />} path="/my-music" />

@@ -5,6 +5,7 @@ import {Button, Input, Checkbox, Link as NextLink, Form} from "@heroui/react";
 import {Icon} from "@iconify/react";
 import {LoginCredentials} from "@/types";
 import { FiAlertCircle } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 interface LoginProps {
     onLogin: (credentials: LoginCredentials) => void;
@@ -18,6 +19,7 @@ export default function Login({ onLogin, onSwitchToRegister, error }: LoginProps
     const [password, setPassword] = React.useState("");
     const [errors, setErrors] = React.useState<{ username?: string; password?: string }>({});
     const [isLoading, setIsLoading] = React.useState(false);
+    const navigate = useNavigate();
 
     const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -133,7 +135,11 @@ export default function Login({ onLogin, onSwitchToRegister, error }: LoginProps
                         <Checkbox name="remember" size="sm" color={ "primary" } defaultSelected={true}>
                             Remember me
                         </Checkbox>
-                        <NextLink className="text-default-500" href="#" size="sm">
+                        <NextLink
+                            className="text-default-500 cursor-pointer"
+                            onClick={() => navigate('/forgot-password')}
+                            size="sm"
+                        >
                             Forgot password?
                         </NextLink>
                     </div>

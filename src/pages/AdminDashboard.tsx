@@ -39,6 +39,7 @@ import UserRegistration from '@/components/admin/UserRegistration';
 import RefundManagement from '@/components/admin/RefundManagement';
 import BanManagement from '@/components/admin/BanManagement';
 import SalesReportManagement from '@/components/admin/SalesReportManagement';
+import AuditLogViewer from '@/components/admin/AuditLogViewer';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -89,7 +90,6 @@ const AdminDashboard = () => {
 
   const menuItems = [
     { key: 'overview', label: 'Overview', icon: FiHome },
-    { key: 'analytics', label: 'Analytics', icon: FiBarChart },
     { key: 'users', label: 'User Management', icon: FiUsers },
     { key: 'moderation', label: 'Content Moderation', icon: FiFlag, badge: overview?.flaggedMusic || 0 },
     { key: 'reviews', label: 'Review Management', icon: FiStar },
@@ -100,6 +100,7 @@ const AdminDashboard = () => {
     { key: 'refunds', label: 'Refund Management', icon: FiDollarSign },
     { key: 'bans', label: 'Ban Management', icon: FiAlertCircle },
     { key: 'reports', label: 'Sales Reports', icon: FiFileText },
+    { key: 'audit-logs', label: 'Audit Logs', icon: FiActivity },
   ];
 
   if (loading) {
@@ -455,15 +456,6 @@ const AdminDashboard = () => {
                         Manage {overview.activeTickets} Active Tickets
                       </Button>
                     )}
-                    <Button
-                      color="primary"
-                      variant="flat"
-                      startContent={<FiBarChart />}
-                      onPress={() => handleTabChange('analytics')}
-                      className="bg-primary/20 backdrop-blur-md hover:bg-primary/30 transition-all"
-                    >
-                      View Detailed Analytics
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -492,6 +484,8 @@ const AdminDashboard = () => {
         return <BanManagement />;
       case 'reports':
         return <SalesReportManagement />;
+      case 'audit-logs':
+        return <AuditLogViewer />;
       default:
         return null;
     }
