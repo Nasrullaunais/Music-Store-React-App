@@ -143,7 +143,7 @@ const ArtistProfile = () => {
       </div>
 
       {/* Profile Information */}
-      <Card>
+      <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardBody>
           <div className="flex flex-col md:flex-row gap-6">
             {/* Avatar Section */}
@@ -211,7 +211,7 @@ const ArtistProfile = () => {
 
       {/* Artist Statistics */}
       {profile && (
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
           <CardHeader>
             <h3 className="text-lg font-semibold">Artist Statistics</h3>
           </CardHeader>
@@ -246,7 +246,7 @@ const ArtistProfile = () => {
       )}
 
       {/* Bio Section */}
-      <Card>
+      <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardHeader>
           <h3 className="text-lg font-semibold">Artist Bio</h3>
         </CardHeader>
@@ -256,7 +256,7 @@ const ArtistProfile = () => {
               value={editForm.bio}
               onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
               placeholder="Tell your fans about yourself, your music journey, influences, and what makes your music unique..."
-              className="w-full min-h-32 p-3 rounded-lg border border-default-200 bg-default-50 resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full min-h-32 p-3 rounded-lg border border-default-200 bg-transparent resize-none focus:outline-none focus:ring-2 focus:ring-primary"
               rows={6}
             />
           ) : (
@@ -268,7 +268,7 @@ const ArtistProfile = () => {
       </Card>
 
       {/* Social Links */}
-      <Card>
+      <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardHeader>
           <h3 className="text-lg font-semibold">Social Media Links</h3>
         </CardHeader>
@@ -342,7 +342,7 @@ const ArtistProfile = () => {
       </Card>
 
       {/* Account Settings */}
-      <Card>
+      <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardHeader>
           <h3 className="text-lg font-semibold">Account Settings</h3>
         </CardHeader>

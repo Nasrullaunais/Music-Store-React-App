@@ -73,7 +73,7 @@ const ArtistDashboard = () => {
       {/* Overview Cards */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-md border-primary/30 shadow-lg">
             <CardBody className="flex flex-row items-center gap-4">
               <div className="p-3 bg-primary/10 rounded-lg">
                 <FiMusic className="text-2xl text-primary" />
@@ -85,7 +85,7 @@ const ArtistDashboard = () => {
             </CardBody>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-success/20 to-success/10 backdrop-blur-md border-success/30 shadow-lg">
             <CardBody className="flex flex-row items-center gap-4">
               <div className="p-3 bg-success/10 rounded-lg">
                 <FiDollarSign className="text-2xl text-success" />
@@ -99,7 +99,7 @@ const ArtistDashboard = () => {
             </CardBody>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-warning/20 to-warning/10 backdrop-blur-md border-warning/30 shadow-lg">
             <CardBody className="flex flex-row items-center gap-4">
               <div className="p-3 bg-warning/10 rounded-lg">
                 <FiTrendingUp className="text-2xl text-warning" />
@@ -111,7 +111,7 @@ const ArtistDashboard = () => {
             </CardBody>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-secondary/20 to-secondary/10 backdrop-blur-md border-secondary/30 shadow-lg">
             <CardBody className="flex flex-row items-center gap-4">
               <div className="p-3 bg-secondary/10 rounded-lg">
                 <FiStar className="text-2xl text-secondary" />
@@ -131,7 +131,7 @@ const ArtistDashboard = () => {
       )}
 
       {/* Main Dashboard Tabs */}
-      <Card>
+      <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardBody>
           <Tabs
             selectedKey={activeTab}

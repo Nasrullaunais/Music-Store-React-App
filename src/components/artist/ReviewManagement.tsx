@@ -147,7 +147,7 @@ const ReviewManagement = () => {
       </div>
 
       {music.length === 0 ? (
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
           <CardBody className="text-center py-12">
             <FiMessageSquare className="mx-auto text-6xl text-default-300 mb-4" />
             <h3 className="text-xl font-semibold mb-2">No Music Available</h3>
@@ -159,7 +159,7 @@ const ReviewManagement = () => {
       ) : (
         <>
           {/* Music Selection and Filters */}
-          <Card>
+          <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
             <CardBody>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Select
@@ -221,7 +221,7 @@ const ReviewManagement = () => {
 
           {/* Selected Track Overview */}
           {selectedMusic && (
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
               <CardBody>
                 <div className="flex items-center gap-4">
                   <img
@@ -246,7 +246,7 @@ const ReviewManagement = () => {
           )}
 
           {/* Reviews List */}
-          <Card>
+          <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
             <CardHeader>
               <div className="flex justify-between items-center w-full">
                 <h3 className="text-lg font-semibold">
@@ -302,7 +302,7 @@ const ReviewManagement = () => {
                             </span>
                           </div>
                           {review.comment && (
-                            <p className="text-default-700">{review.comment}</p>
+                            <p className="text-default-700 bg-white/5 p-3 rounded-lg">{review.comment}</p>
                           )}
                         </div>
                       </div>
@@ -317,7 +317,7 @@ const ReviewManagement = () => {
           {/* Review Statistics */}
           {reviews.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
+              <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
                 <CardHeader>
                   <h3 className="text-lg font-semibold">Rating Breakdown</h3>
                 </CardHeader>
@@ -350,7 +350,7 @@ const ReviewManagement = () => {
                 </CardBody>
               </Card>
 
-              <Card>
+              <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
                 <CardHeader>
                   <h3 className="text-lg font-semibold">Review Insights</h3>
                 </CardHeader>

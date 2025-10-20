@@ -64,7 +64,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
+        <Card className="bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-md border-primary/30 shadow-lg">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <FiMusic className="text-primary" />
@@ -87,7 +87,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
           </CardBody>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-success/20 to-success/10 backdrop-blur-md border-success/30 shadow-lg">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <FiDollarSign className="text-success" />
@@ -110,7 +110,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
           </CardBody>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-warning/20 to-warning/10 backdrop-blur-md border-warning/30 shadow-lg">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <FiStar className="text-warning" />
@@ -142,7 +142,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
       </div>
 
       {/* Genre Distribution */}
-      <Card>
+      <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardHeader>
           <h3 className="text-lg font-semibold">Genre Distribution</h3>
         </CardHeader>
@@ -176,7 +176,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
       </Card>
 
       {/* Rating Distribution */}
-      <Card>
+      <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardHeader>
           <h3 className="text-lg font-semibold">Rating Distribution</h3>
         </CardHeader>
@@ -218,7 +218,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
 
       {/* Top Performing Tracks */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
           <CardHeader>
             <h3 className="text-lg font-semibold">Top Performing Tracks</h3>
           </CardHeader>
@@ -226,7 +226,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
             <div className="space-y-4">
               {salesAnalytics.topTracks.length > 0 ? (
                 salesAnalytics.topTracks.map((track, index) => (
-                  <div key={track.id} className="flex items-center gap-3 p-3 rounded-lg bg-default-50">
+                  <div key={track.id} className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
                     <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm">
                       {index + 1}
                     </div>
@@ -251,7 +251,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
           </CardBody>
         </Card>
 
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
           <CardHeader>
             <h3 className="text-lg font-semibold">Top Rated Tracks</h3>
           </CardHeader>
@@ -259,7 +259,7 @@ const ArtistAnalytics = ({ stats, onRefresh }: ArtistAnalyticsProps) => {
             <div className="space-y-4">
               {reviewAnalytics.topRatedTracks?.length > 0 ? (
                 reviewAnalytics.topRatedTracks.map((track, index) => (
-                  <div key={track.id} className="flex items-center gap-3 p-3 rounded-lg bg-default-50">
+                  <div key={track.id} className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
                     <div className="flex-shrink-0 w-8 h-8 bg-warning rounded-full flex items-center justify-center text-white font-bold text-sm">
                       {index + 1}
                     </div>

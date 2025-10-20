@@ -198,7 +198,7 @@ const MusicManagement = ({ defaultView = 'library', onStatsUpdate }: MusicManage
         </Button>
       </div>
 
-      <Card>
+      <Card className="bg-white/20 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardBody className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
@@ -314,7 +314,7 @@ const MusicManagement = ({ defaultView = 'library', onStatsUpdate }: MusicManage
         </Button>
       </div>
 
-      <Card>
+      <Card className="bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg">
         <CardBody>
           {loading ? (
             <div className="flex justify-center items-center h-64">
@@ -337,7 +337,13 @@ const MusicManagement = ({ defaultView = 'library', onStatsUpdate }: MusicManage
             </div>
           ) : (
             <>
-              <Table aria-label="Music library table">
+              <Table
+                aria-label="Music library table"
+                classNames={{
+                  wrapper: "bg-transparent shadow-none",
+                  tr: "bg-white/5 hover:bg-white/10",
+                }}
+              >
                 <TableHeader>
                   <TableColumn>TRACK</TableColumn>
                   <TableColumn>GENRE</TableColumn>
@@ -386,7 +392,11 @@ const MusicManagement = ({ defaultView = 'library', onStatsUpdate }: MusicManage
                               <FiMoreVertical />
                             </Button>
                           </DropdownTrigger>
-                          <DropdownMenu>
+                          <DropdownMenu
+                            classNames={{
+                              base: "bg-white/10 backdrop-blur-md border border-gray-200/20 shadow-lg",
+                            }}
+                          >
                             <DropdownItem
                               key="edit"
                               startContent={<FiEdit />}
@@ -432,7 +442,7 @@ const MusicManagement = ({ defaultView = 'library', onStatsUpdate }: MusicManage
 
       {/* Edit Modal */}
       <Modal isOpen={isEditOpen} onClose={onEditClose} size="2xl">
-        <ModalContent>
+        <ModalContent className="bg-gray-800/80 backdrop-blur-md border border-gray-200/20">
           <ModalHeader>Edit Track</ModalHeader>
           <ModalBody className="space-y-4">
             <Input
