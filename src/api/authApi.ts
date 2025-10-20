@@ -1,9 +1,13 @@
 import {LoginCredentials, RegisterData, User} from "@/types";
 import api, { API_ENDPOINTS} from "@/services/api.ts";
 
-
-
-
+export interface BanErrorResponse {
+    message: string;
+    errorType: string;
+    banReason?: string;
+    bannedUntil?: string;
+    timestamp?: string;
+}
 
 export const registerUser = async (userData: RegisterData): Promise<User> => {
     try{
@@ -25,6 +29,15 @@ export const loginUser = async (credentials: LoginCredentials): Promise<User> =>
         localStorage.setItem('user', JSON.stringify(user));
         return user;
     } catch (error: any){
+        // Check if this is a ban error (403 status with ACCOUNT_BANNED errorType)
+        if (error.response?.status === 403 && error.response?.data?.errorType === 'ACCOUNT_BANNED') {
+            const banError = error.response.data as BanErrorResponse;
+            // Throw a special error object that includes all ban details
+            const banErrorObj = new Error(banError.message) as any;
+            banErrorObj.isBanError = true;
+            banErrorObj.banDetails = banError;
+            throw banErrorObj;
+        }
         throw new Error(error.response?.data?.message || 'Login failed');
     }
 }

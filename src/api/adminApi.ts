@@ -1,4 +1,5 @@
 import { apiClient } from '@/services/api';
+import {Music} from "@/types";
 
 export interface AdminUser {
   id: number;
@@ -11,6 +12,11 @@ export interface AdminUser {
   cover?: string;
   enabled: boolean;
   createdAt?: string; // Optional since it could be null
+  isBanned?: boolean;
+  banReason?: string;
+  bannedAt?: string;
+  bannedUntil?: string;
+  bannedBy?: string;
 }
 
 export interface CreateUserRequest {
@@ -37,6 +43,86 @@ export interface AdminRegistrationRequest {
   email: string;
   firstName: string;
   lastName: string;
+}
+
+export interface BanRequest {
+  reason: string;
+  durationInHours: number;
+}
+
+export interface BanResponse {
+  userId: number;
+  username: string;
+  email: string;
+  isBanned: boolean;
+  banReason?: string;
+  bannedAt?: string;
+  bannedUntil?: string;
+  bannedBy?: string;
+  message: string;
+}
+
+export interface BannedUserDto {
+  userId: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  userType: string;
+  banReason: string;
+  bannedAt: string;
+  bannedUntil: string;
+  bannedBy: string;
+  hoursRemaining: number;
+}
+
+export interface BannedUsersResponse {
+  content: BannedUserDto[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+  };
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
+export interface AllBannedUsersResponse {
+  bannedUsers: BannedUserDto[];
+  totalCount: number;
+  timestamp: string;
+}
+
+export interface BanStatistics {
+  totalBanned: number;
+  bannedCustomers: number;
+  bannedArtists: number;
+  expiringSoon: number;
+  timestamp: string;
+}
+
+export interface TopProduct {
+  productName: string;
+  artistName: string;
+  quantitySold: number;
+  revenue: number;
+}
+
+export interface DailySales {
+  day: number;
+  sales: number;
+  orders: number;
+}
+
+export interface MonthlySalesData {
+  month: number;
+  year: number;
+  totalSales: number;
+  totalOrders: number;
+  totalCustomers: number;
+  averageOrderValue: number;
+  topProducts: TopProduct[];
+  dailySales: DailySales[];
 }
 
 export interface StaffUser {
@@ -103,13 +189,22 @@ export interface AdminReview {
 
 export interface AdminOrder {
   id: number;
-  customerUsername: string;
-  totalAmount: number;
+  customer: {
+    id: number;
+    username: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+  };
+  customerUsername?: string; // For backward compatibility
   orderDate: string;
+  totalAmount: number;
   status: string;
-  items: {
-    musicName: string;
-    artistUsername: string;
+  paymentMethod: string;
+  orderItems: {
+    id: number;
+    product: Music;
+    quantity: number;
     price: number;
   }[];
 }
@@ -120,13 +215,20 @@ export interface AdminTicket {
   status: string;
   priority: string;
   customerUsername: string;
+  customerName?: string; // Transient field from backend
   assignedStaffUsername?: string;
+  assignedStaffName?: string; // Transient field from backend
   createdAt: string;
   updatedAt: string;
-  // New optional/transient fields returned by the backend when assigning or fetching tickets
-  assignedStaffName?: string;
-  customerName?: string;
   closedAt?: string | null;
+  // Additional customer information if available
+  customer?: {
+    id?: number;
+    username?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+  };
 }
 
 export interface PerformanceMetrics {
@@ -193,6 +295,36 @@ export const adminAPI = {
     await apiClient.put(`/api/admin/users/${userId}/status`, {
       enabled: enabled
     });
+  },
+
+  async banCustomer(customerId: number, banData: BanRequest): Promise<BanResponse> {
+    const response = await apiClient.post(`/api/admin/customers/${customerId}/ban`, banData);
+    return response.data;
+  },
+
+  async unbanCustomer(customerId: number): Promise<BanResponse> {
+    const response = await apiClient.delete(`/api/admin/customers/${customerId}/ban`);
+    return response.data;
+  },
+
+  async banArtist(artistId: number, banData: BanRequest): Promise<BanResponse> {
+    const response = await apiClient.post(`/api/admin/artists/${artistId}/ban`, banData);
+    return response.data;
+  },
+
+  async unbanArtist(artistId: number): Promise<BanResponse> {
+    const response = await apiClient.delete(`/api/admin/artists/${artistId}/ban`);
+    return response.data;
+  },
+
+  async getCustomerBanStatus(customerId: number): Promise<BanResponse> {
+    const response = await apiClient.get(`/api/admin/customers/${customerId}/ban-status`);
+    return response.data;
+  },
+
+  async getArtistBanStatus(artistId: number): Promise<BanResponse> {
+    const response = await apiClient.get(`/api/admin/artists/${artistId}/ban-status`);
+    return response.data;
   },
 
   // Analytics
@@ -330,5 +462,37 @@ export const adminAPI = {
 
   async rejectRefund(refundId: number, adminNotes: string): Promise<void> {
     await apiClient.put(`/api/admin/refunds/${refundId}/reject`, { adminNotes });
+  },
+
+  // Banned Users Management
+  async getBannedUsers(page = 0, size = 10): Promise<BannedUsersResponse> {
+    const response = await apiClient.get(`/api/admin/banned-users?page=${page}&size=${size}`);
+    return response.data;
+  },
+
+  async getAllBannedUsers(): Promise<AllBannedUsersResponse> {
+    const response = await apiClient.get('/api/admin/banned-users/all');
+    return response.data;
+  },
+
+  async getBanStatistics(): Promise<BanStatistics> {
+    const response = await apiClient.get('/api/admin/banned-users/statistics');
+    return response.data;
+  },
+
+  // Sales Reports
+  async downloadMonthlySalesReport(year: number, month: number): Promise<Blob> {
+    const response = await apiClient.get(`/api/admin/reports/sales/monthly`, {
+      params: { year, month },
+      responseType: 'blob'
+    });
+    return response.data;
+  },
+
+  async getMonthlySalesData(year: number, month: number): Promise<MonthlySalesData> {
+    const response = await apiClient.get(`/api/admin/reports/sales/monthly/data`, {
+      params: { year, month }
+    });
+    return response.data;
   },
 };

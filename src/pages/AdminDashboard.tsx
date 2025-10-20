@@ -21,7 +21,9 @@ import {
   FiDollarSign,
   FiUserPlus,
   FiLogOut,
-  FiHome
+  FiHome,
+  FiAlertCircle,
+  FiFileText
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 
@@ -35,6 +37,8 @@ import TicketManagement from '@/components/admin/TicketManagement';
 import SystemManagement from '@/components/admin/SystemManagement';
 import UserRegistration from '@/components/admin/UserRegistration';
 import RefundManagement from '@/components/admin/RefundManagement';
+import BanManagement from '@/components/admin/BanManagement';
+import SalesReportManagement from '@/components/admin/SalesReportManagement';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -94,6 +98,8 @@ const AdminDashboard = () => {
     { key: 'system', label: 'System Management', icon: FiSettings },
     { key: 'registration', label: 'User Registration', icon: FiUserPlus },
     { key: 'refunds', label: 'Refund Management', icon: FiDollarSign },
+    { key: 'bans', label: 'Ban Management', icon: FiAlertCircle },
+    { key: 'reports', label: 'Sales Reports', icon: FiFileText },
   ];
 
   if (loading) {
@@ -482,6 +488,10 @@ const AdminDashboard = () => {
         return <UserRegistration />;
       case 'refunds':
         return <RefundManagement />;
+      case 'bans':
+        return <BanManagement />;
+      case 'reports':
+        return <SalesReportManagement />;
       default:
         return null;
     }
@@ -490,9 +500,9 @@ const AdminDashboard = () => {
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-white/30 backdrop-blur-lg border-r border-white/40 shadow-3xl fixed left-0 top-0 h-[98vh] flex flex-col z-50 m-2 rounded-2xl">
+      <aside className="w-64 bg-white/40 backdrop-blur-lg shadow-3xl fixed left-0 top-0 h-[98vh] flex flex-col z-50 m-2 rounded-2xl">
         {/* Logo/Header */}
-        <div className="p-6 border-b border-white/40">
+        <div className="p-6">
           <h2 className="text-2xl font-bold text-primary">Admin Panel</h2>
           <p className="text-sm text-default-600 mt-1">{user?.username}</p>
         </div>
@@ -533,7 +543,7 @@ const AdminDashboard = () => {
         </nav>
 
         {/* Logout Button */}
-        <div className="p-4 border-t border-white/40">
+        <div className="p-4">
           <Button
             color="danger"
             variant="flat"

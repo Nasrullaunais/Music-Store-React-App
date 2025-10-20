@@ -118,7 +118,7 @@ export const Navbar = () => {
       position="sticky"
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="fixed top-0 mt-3 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-1rem)] lg:w-[calc(100%-2rem)] max-w-7xl rounded-xl bg-white/90 dark:bg-gray-900/90 border border-indigo-200/50 dark:border-indigo-800/50 shadow"
+      className="fixed top-0 mt-3 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-1rem)] lg:w-[calc(100%-2rem)] max-w-7xl rounded-xl bg-white/60 backdrop-blur-lg dark:bg-gray-900/90 border border-indigo-200/50 dark:border-indigo-800/50 shadow"
       classNames={{
         wrapper: "px-3 sm:px-4",
         brand: "flex-grow-0",

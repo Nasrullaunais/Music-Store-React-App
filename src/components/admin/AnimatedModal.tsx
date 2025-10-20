@@ -2,13 +2,15 @@ import { ReactNode } from 'react';
 import { Modal, ModalContent } from '@heroui/react';
 import { motion } from 'framer-motion';
 
-interface AnimatedModalProps {
+export interface AnimatedModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
   placement?: 'auto' | 'top' | 'bottom' | 'center' | 'top-center' | 'bottom-center';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | 'full';
   backdrop?: 'transparent' | 'opaque' | 'blur';
+  isDismissable?: boolean;
+  hideCloseButton?: boolean;
 }
 
 const AnimatedModal = ({
@@ -17,7 +19,9 @@ const AnimatedModal = ({
   children,
   placement = 'top-center',
   size = 'md',
-  backdrop = 'blur'
+  backdrop = 'blur',
+  isDismissable = true,
+  hideCloseButton = false,
 }: AnimatedModalProps) => {
   return (
     <Modal
@@ -26,6 +30,8 @@ const AnimatedModal = ({
       placement={placement}
       size={size}
       backdrop={backdrop}
+      isDismissable={isDismissable}
+      hideCloseButton={hideCloseButton}
       classNames={{
         backdrop: "bg-gradient-to-t from-zinc-900/50 to-zinc-900/10 backdrop-blur-md",
         wrapper: "z-[999]",

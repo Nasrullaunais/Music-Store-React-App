@@ -20,7 +20,9 @@ import {
   useDisclosure,
   Select,
   SelectItem,
-  Input
+  Input,
+  Modal,
+  ModalContent,
 } from '@heroui/react';
 import {
   FiShoppingCart,
@@ -28,7 +30,9 @@ import {
   FiUser,
   FiMusic,
   FiRefreshCw,
-  FiAlertTriangle
+  FiAlertTriangle,
+  FiEye,
+  FiPackage,
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import AnimatedModal from './AnimatedModal';
@@ -41,8 +45,10 @@ const OrderManagement = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
   const [refundReason, setRefundReason] = useState('');
+  const [viewItemsOrder, setViewItemsOrder] = useState<AdminOrder | null>(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isItemsModalOpen, onOpen: onItemsModalOpen, onClose: onItemsModalClose } = useDisclosure();
 
   useEffect(() => {
     loadOrders();
@@ -84,6 +90,11 @@ const OrderManagement = () => {
       toast.error('Failed to process refund');
       console.error('Refund error:', error);
     }
+  };
+
+  const handleViewAllItems = (order: AdminOrder) => {
+    setViewItemsOrder(order);
+    onItemsModalOpen();
   };
 
   const getStatusColor = (status: string) => {
@@ -204,24 +215,15 @@ const OrderManagement = () => {
                     <div className="flex items-center gap-2">
                       <FiUser className="text-default-400" />
                       <span>
-                        {(
-                          // Prefer nested customer object
-                          (order as any).customer?.username ||
-                          // Legacy flat field
-                          (order as any).customerUsername ||
-                          // Another legacy name
-                          (order as any).customerName ||
-                          'Unknown'
-                        )}
+                        {order.customer?.username || order.customerUsername || 'Unknown'}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      {(order.items || []).slice(0, 2).map((item: any, index: number) => {
-                        // Item may be in several shapes: { musicName, artistUsername }, or { music: { name, artistUsername } }
-                        const musicName = item.musicName || item.name || item.title || item.music?.name || item.music?.title || 'Unknown Track';
-                        const artistName = item.artistUsername || item.artist || item.music?.artist || item.music?.artistUsername || 'Unknown Artist';
+                      {(order.orderItems || []).slice(0, 2).map((item, index) => {
+                        const musicName = item.product?.name || item.product?.title || 'Unknown Track';
+                        const artistName = item.product?.artist || item.product?.artistUsername || 'Unknown Artist';
                         return (
                           <div key={index} className="flex items-center gap-2 text-sm">
                             <FiMusic className="text-primary text-xs" />
@@ -230,12 +232,19 @@ const OrderManagement = () => {
                           </div>
                         );
                       })}
-                      {(order.items?.length || 0) > 2 && (
-                        <p className="text-xs text-default-500">
-                          +{(order.items?.length || 0) - 2} more items
-                        </p>
+                      {(order.orderItems?.length || 0) > 2 && (
+                        <Button
+                          size="xs"
+                          variant="link"
+                          color="primary"
+                          onPress={() => handleViewAllItems(order)}
+                          className="p-0"
+                          startContent={<FiEye className="mr-1" />}
+                        >
+                          View All Items
+                        </Button>
                       )}
-                      {(!order.items || order.items.length === 0) && (
+                      {(!order.orderItems || order.orderItems.length === 0) && (
                         <p className="text-xs text-default-500">No items</p>
                       )}
                     </div>
@@ -322,22 +331,26 @@ const OrderManagement = () => {
                 <div className="border-t border-divider pt-3">
                   <p className="font-medium mb-2">Order Items:</p>
                   <div className="space-y-2">
-                    {(selectedOrder.items || []).map((item: any, index: number) => {
-                      const musicName = item.musicName || item.name || item.title || item.music?.name || item.music?.title || 'Unknown Track';
-                      const artistName = item.artistUsername || item.artist || item.music?.artist || item.music?.artistUsername || 'Unknown Artist';
-                      const price = typeof item.price === 'number' ? item.price : (item.music?.price || 0);
+                    {(selectedOrder.orderItems || []).map((item, index) => {
+                      const musicName = item.product?.name || item.product?.title || 'Unknown Track';
+                      const artistName = item.product?.artist || item.product?.artistUsername || 'Unknown Artist';
+                      const price = item.price || 0;
+                      const quantity = item.quantity || 1;
                       return (
                         <div key={index} className="flex justify-between items-center text-sm">
                           <div className="flex items-center gap-2">
                             <FiMusic className="text-primary" />
                             <span>{musicName}</span>
                             <span className="text-default-500">by {artistName}</span>
+                            {quantity > 1 && (
+                              <span className="text-xs text-default-400">(x{quantity})</span>
+                            )}
                           </div>
                           <span className="font-medium">{formatCurrency(price)}</span>
                         </div>
                       );
                     })}
-                    {(!selectedOrder.items || selectedOrder.items.length === 0) && (
+                    {(!selectedOrder.orderItems || selectedOrder.orderItems.length === 0) && (
                       <p className="text-sm text-default-500">No items found</p>
                     )}
                   </div>
@@ -384,6 +397,89 @@ const OrderManagement = () => {
           </Button>
         </ModalFooter>
       </AnimatedModal>
+
+      {/* View All Items Modal */}
+      <Modal
+        isOpen={isItemsModalOpen}
+        onClose={onItemsModalClose}
+        size="lg"
+        placement="top-center"
+      >
+        <ModalContent className="bg-white/90 border border-gray-200 shadow-2xl">
+          <ModalHeader>
+            <div className="flex items-center gap-2">
+              <FiPackage className="text-primary" />
+              <span className="text-lg font-semibold">Order Items</span>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            {viewItemsOrder && (
+              <div className="space-y-4">
+                {/* Order Details */}
+                <div className="p-4 bg-default-50 rounded-lg">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <p className="font-semibold">Order #{viewItemsOrder.id}</p>
+                      <p className="text-sm text-default-600">
+                        Customer: {(
+                          (viewItemsOrder as any).customer?.username ||
+                          (viewItemsOrder as any).customerUsername ||
+                          (viewItemsOrder as any).customerName ||
+                          'Unknown'
+                        )}
+                      </p>
+                      <p className="text-sm text-default-600">
+                        Date: {formatDate(viewItemsOrder.orderDate)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-success">
+                        {formatCurrency(viewItemsOrder.totalAmount)}
+                      </p>
+                      <Chip color={getStatusColor(viewItemsOrder.status)} variant="flat" size="sm">
+                        {viewItemsOrder.status}
+                      </Chip>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-divider pt-3">
+                    <p className="font-medium mb-2">Order Items:</p>
+                    <div className="space-y-2">
+                      {(viewItemsOrder.orderItems || []).map((item, index) => {
+                        const musicName = item.product?.name || item.product?.title || 'Unknown Track';
+                        const artistName = item.product?.artist || item.product?.artistUsername || 'Unknown Artist';
+                        const price = item.price || 0;
+                        const quantity = item.quantity || 1;
+                        return (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <div className="flex items-center gap-2">
+                              <FiMusic className="text-primary" />
+                              <span>{musicName}</span>
+                              <span className="text-default-500">by {artistName}</span>
+                              {quantity > 1 && (
+                                <span className="text-xs text-default-400">(x{quantity})</span>
+                              )}
+                            </div>
+                            <span className="font-medium">{formatCurrency(price)}</span>
+                          </div>
+                        );
+                      })}
+                      {(!viewItemsOrder.orderItems || viewItemsOrder.orderItems.length === 0) && (
+                        <p className="text-sm text-default-500">No items found</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="default" variant="flat" onPress={onItemsModalClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

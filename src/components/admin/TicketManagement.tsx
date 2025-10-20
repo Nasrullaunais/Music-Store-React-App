@@ -288,7 +288,14 @@ const TicketManagement = () => {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <FiUser className="text-default-400" />
-                      <span>{ticket.customerUsername || 'Unknown'}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium">
+                          {ticket.customerName || ticket.customer?.username || ticket.customerUsername || 'Unknown'}
+                        </span>
+                        {ticket.customer?.email && (
+                          <span className="text-xs text-default-500">{ticket.customer.email}</span>
+                        )}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -372,7 +379,7 @@ const TicketManagement = () => {
                 <p className="font-semibold">{selectedTicket.subject}</p>
                 <div className="flex items-center gap-4 mt-2 text-sm text-default-600">
                   <span>ID: {selectedTicket.id}</span>
-                  <span>Customer: {selectedTicket.customerUsername}</span>
+                  <span>Customer: {selectedTicket.customerName || selectedTicket.customer?.username || 'Unknown'}</span>
                   <span>Created: {formatDate(selectedTicket.createdAt)}</span>
                 </div>
                 <div className="flex gap-2 mt-2">

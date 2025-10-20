@@ -193,7 +193,7 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
 
     return (
         <>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onPlay(music)}>
+            <div className="bg-white/60 backdrop-blur-lg dark:bg-gray-800 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onPlay(music)}>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
                         {/* Play/Pause Icon */}
@@ -231,11 +231,11 @@ const MusicCard: React.FC<MusicCardProps> = ({ music, onPlay, currentMusic, allP
                             <DropdownTrigger>
                                 <Button
                                     isIconOnly
-                                    size="sm"
+                                    size="lg"
                                     variant="light"
                                     aria-label="More options"
                                 >
-                                    <MoreVerticalIcon size={16} />
+                                    <MoreVerticalIcon size={20} />
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu

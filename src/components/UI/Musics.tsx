@@ -68,7 +68,7 @@ const MusicPage: React.FC<MusicsProps> = ({ searchQuery = '' }) => {
                 <p className="text-indigo-600 dark:text-indigo-400">
                     {searchQuery ? 'Searching music...' : 'Loading tracks...'}
                 </p>
-            </div>
+                </div>
         );
     }
 
@@ -146,7 +146,7 @@ const MusicPage: React.FC<MusicsProps> = ({ searchQuery = '' }) => {
                         <Card
                             isBlurred={true}
                             key={track.id}
-                            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm w-full py-4 hover:shadow-xl rounded-xl hover:scale-105 transition-all duration-300 border border-indigo-100 dark:border-indigo-900/50"
+                            className="bg-white/60 dark:bg-gray-800/90 backdrop-blur-lg w-full py-4 hover:shadow-md rounded-xl hover:scale-105 transition-all duration-300"
                         >
                             <CardHeader className="pb-0 pt-2 px-4 flex-col justify-between items-start">
                                 <h4 className="font-bold text-medium text-indigo-950 dark:text-indigo-50 truncate w-full">

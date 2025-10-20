@@ -29,6 +29,7 @@
     "@tailwindcss/postcss": "4.1.11",
     "@tailwindcss/vite": "4.1.11",
     "axios": "^1.12.2",
+    "bad-words": "^4.0.0",
     "clsx": "2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "11.18.2",

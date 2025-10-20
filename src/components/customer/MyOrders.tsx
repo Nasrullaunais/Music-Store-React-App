@@ -149,8 +149,8 @@ const MyOrders = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
+    <div className="space-y-4">
+      <Card className="bg-white/50 backdrop-blur-lg p-2 ">
         <CardHeader>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <FiShoppingBag className="text-primary" />
@@ -180,7 +180,7 @@ const MyOrders = () => {
               orders.map((order) => {
                 const refund = getOrderRefund(order.id);
                 return (
-                  <Card key={order.id} className="hover:shadow-lg transition-shadow">
+                  <Card key={order.id} className="hover:shadow-lg transition-shadow backdrop-blur-lg bg-white/50">
                     <CardBody className="p-5">
                       <div className="flex justify-between items-start mb-4">
                         <div>

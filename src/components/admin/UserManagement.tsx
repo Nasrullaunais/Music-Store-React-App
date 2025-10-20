@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminAPI, AdminUser, CreateUserRequest } from '@/api/adminApi.ts';
+import { adminAPI, AdminUser, CreateUserRequest, BanRequest } from '@/api/adminApi.ts';
 import {
   Card,
   CardBody,
@@ -20,7 +20,8 @@ import {
   Chip,
   Pagination,
   Spinner,
-  useDisclosure
+  useDisclosure,
+  Textarea
 } from '@heroui/react';
 import {
   FiPlus,
@@ -28,7 +29,9 @@ import {
   FiToggleLeft,
   FiToggleRight,
   FiSearch,
-  FiUsers
+  FiUsers,
+  FiAlertCircle,
+  FiShield
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import AnimatedModal from './AnimatedModal';
@@ -42,8 +45,10 @@ const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [isBanning, setIsBanning] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isBanModalOpen, onOpen: onBanModalOpen, onClose: onBanModalClose } = useDisclosure();
 
   const [formData, setFormData] = useState<CreateUserRequest>({
     username: '',
@@ -52,6 +57,11 @@ const UserManagement = () => {
     role: 'CUSTOMER',
     firstName: '',
     lastName: ''
+  });
+
+  const [banFormData, setBanFormData] = useState<BanRequest>({
+    reason: '',
+    durationInHours: 24
   });
 
   useEffect(() => {
@@ -149,6 +159,56 @@ const UserManagement = () => {
     } catch (error) {
       toast.error('Failed to update user status');
       console.error('Toggle status error:', error);
+    }
+  };
+
+  const handleBanUser = (user: AdminUser) => {
+    setSelectedUser(user);
+    setBanFormData({
+      reason: '',
+      durationInHours: 24
+    });
+    onBanModalOpen();
+  };
+
+  const handleSubmitBan = async () => {
+    if (!selectedUser) return;
+
+    try {
+      setIsBanning(true);
+      if (selectedUser.role === 'CUSTOMER') {
+        await adminAPI.banCustomer(selectedUser.id, banFormData);
+      } else if (selectedUser.role === 'ARTIST') {
+        await adminAPI.banArtist(selectedUser.id, banFormData);
+      } else {
+        toast.error('Only customers and artists can be banned');
+        return;
+      }
+
+      toast.success(`User banned successfully for ${banFormData.durationInHours} hours`);
+      onBanModalClose();
+      loadUsers();
+    } catch (error) {
+      toast.error('Failed to ban user');
+      console.error('Ban error:', error);
+    } finally {
+      setIsBanning(false);
+    }
+  };
+
+  const handleUnbanUser = async (user: AdminUser) => {
+    try {
+      if (user.role === 'CUSTOMER') {
+        await adminAPI.unbanCustomer(user.id);
+      } else if (user.role === 'ARTIST') {
+        await adminAPI.unbanArtist(user.id);
+      }
+
+      toast.success('User unbanned successfully');
+      loadUsers();
+    } catch (error) {
+      toast.error('Failed to unban user');
+      console.error('Unban error:', error);
     }
   };
 
@@ -295,9 +355,16 @@ const UserManagement = () => {
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <Chip color={getStatusColor(user.enabled)} variant="flat" size="sm">
-                      {user.enabled ? 'Active' : 'Disabled'}
-                    </Chip>
+                    <div className="flex flex-col gap-1">
+                      <Chip color={getStatusColor(user.enabled)} variant="flat" size="sm">
+                        {user.enabled ? 'Active' : 'Disabled'}
+                      </Chip>
+                      {user.isBanned && (
+                        <Chip color="danger" variant="flat" size="sm" startContent={<FiAlertCircle />}>
+                          Banned
+                        </Chip>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>{formatDate(user.createdAt)}</TableCell>
                   <TableCell>
@@ -320,6 +387,18 @@ const UserManagement = () => {
                       >
                         {user.enabled ? <FiToggleRight /> : <FiToggleLeft />}
                       </Button>
+                      {(user.role === 'CUSTOMER' || user.role === 'ARTIST') && (
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          color={user.isBanned ? 'success' : 'danger'}
+                          onPress={() => user.isBanned ? handleUnbanUser(user) : handleBanUser(user)}
+                          title={user.isBanned ? 'Unban User' : 'Ban User'}
+                        >
+                          {user.isBanned ? <FiShield /> : <FiAlertCircle />}
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -413,6 +492,108 @@ const UserManagement = () => {
           </Button>
           <Button color="primary" onPress={handleSubmit}>
             {isCreating ? 'Create User' : 'Update User'}
+          </Button>
+        </ModalFooter>
+      </AnimatedModal>
+
+      {/* Ban User Modal */}
+      <AnimatedModal
+        isOpen={isBanModalOpen}
+        onClose={onBanModalClose}
+        placement="top-center"
+        size="md"
+        isDismissable={!isBanning}
+      >
+        <ModalHeader className="flex items-center gap-2 text-xl font-bold">
+          <FiAlertCircle className="text-danger" />
+          Ban User: {selectedUser?.username}
+        </ModalHeader>
+        <ModalBody>
+          {isBanning ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <Spinner size="lg" color="danger" className="mb-4" />
+              <p className="text-lg font-semibold text-default-700">Banning user...</p>
+              <p className="text-sm text-default-500 mt-2">Please wait while we process your request</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="bg-danger-50/50 rounded-lg p-4">
+                <p className="text-sm text-default-700 mb-3 font-medium">
+                  You are about to ban this user from the platform:
+                </p>
+                <div className="space-y-2 mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-default-500">Username:</span>
+                    <span className="text-sm font-bold text-default-700">{selectedUser?.username}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-default-500">Email:</span>
+                    <span className="text-sm font-bold text-default-700">{selectedUser?.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-default-500">Role:</span>
+                    <Chip color={getRoleColor(selectedUser?.role || '')} size="sm" variant="flat">
+                      {selectedUser?.role}
+                    </Chip>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <Textarea
+                  label="Ban Reason"
+                  placeholder="Enter the reason for the ban (required)"
+                  value={banFormData.reason}
+                  onChange={(e) => setBanFormData(prev => ({ ...prev, reason: e.target.value }))}
+                  classNames={{
+                    inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+                  }}
+                  isRequired
+                  minRows={3}
+                />
+                <Input
+                  label="Duration (in hours)"
+                  placeholder="Enter duration in hours"
+                  type="number"
+                  value={String(banFormData.durationInHours)}
+                  onChange={(e) => setBanFormData(prev => ({ ...prev, durationInHours: Number(e.target.value) }))}
+                  classNames={{
+                    inputWrapper: "bg-white/30 backdrop-blur-lg border-white/50"
+                  }}
+                  isRequired
+                  description={`User will be banned for ${banFormData.durationInHours} hours (${Math.round(banFormData.durationInHours / 24 * 10) / 10} days)`}
+                />
+              </div>
+
+              <div className="bg-warning-50/50 rounded-lg p-3">
+                <p className="text-xs text-warning-700 flex items-start gap-2">
+                  <FiAlertCircle className="mt-0.5 flex-shrink-0" />
+                  <span>
+                    The user will be immediately logged out and unable to access the platform until the ban expires or is manually removed.
+                  </span>
+                </p>
+              </div>
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="default"
+            variant="light"
+            onPress={onBanModalClose}
+            isDisabled={isBanning}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="danger"
+            variant="flat"
+            startContent={!isBanning && <FiAlertCircle />}
+            onPress={handleSubmitBan}
+            isLoading={isBanning}
+            isDisabled={isBanning || !banFormData.reason.trim() || banFormData.durationInHours <= 0}
+          >
+            {isBanning ? 'Banning User...' : 'Confirm Ban'}
           </Button>
         </ModalFooter>
       </AnimatedModal>

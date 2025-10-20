@@ -13,6 +13,7 @@ import {
 import { FiUser, FiUserPlus, FiMail, FiLock, FiUsers, FiShield, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { adminAPI, StaffRegistrationRequest, AdminRegistrationRequest } from '@/api/adminApi';
+import { validateFieldsForProfanity, getCensoredWordError } from '@/utils/profanityFilter';
 
 interface ValidationErrors {
   username?: string;
@@ -105,6 +106,20 @@ const UserRegistration = () => {
       errors.password = 'Password must be at least 8 characters long';
     }
 
+    // Check for profanity in all text fields
+    const profanityCheck = validateFieldsForProfanity({
+      username: staffForm.username,
+      firstName: staffForm.firstName,
+      lastName: staffForm.lastName,
+      position: staffForm.position || ''
+    });
+
+    if (!profanityCheck.isValid) {
+      profanityCheck.invalidFields.forEach((fieldName) => {
+        errors[fieldName as keyof ValidationErrors] = getCensoredWordError(fieldName);
+      });
+    }
+
     setStaffErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -130,6 +145,19 @@ const UserRegistration = () => {
 
     if (adminForm.password.length < 8) {
       errors.password = 'Password must be at least 8 characters long';
+    }
+
+    // Check for profanity in all text fields
+    const profanityCheck = validateFieldsForProfanity({
+      username: adminForm.username,
+      firstName: adminForm.firstName,
+      lastName: adminForm.lastName
+    });
+
+    if (!profanityCheck.isValid) {
+      profanityCheck.invalidFields.forEach((fieldName) => {
+        errors[fieldName as keyof ValidationErrors] = getCensoredWordError(fieldName);
+      });
     }
 
     setAdminErrors(errors);
@@ -269,10 +297,10 @@ const UserRegistration = () => {
                           }}
                           startContent={<FiUser className="text-primary" />}
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-primary transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-primary transition-colors"
                           }}
                           isInvalid={!!staffErrors.firstName}
                           errorMessage={staffErrors.firstName}
@@ -289,10 +317,10 @@ const UserRegistration = () => {
                           }}
                           startContent={<FiUser className="text-primary" />}
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-primary transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-primary transition-colors"
                           }}
                           isInvalid={!!staffErrors.lastName}
                           errorMessage={staffErrors.lastName}
@@ -319,10 +347,10 @@ const UserRegistration = () => {
                             ) : null
                           }
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-primary transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-primary transition-colors"
                           }}
                           description="3-20 characters, letters, numbers, and underscores only"
                           isInvalid={!!staffErrors.username}
@@ -348,10 +376,10 @@ const UserRegistration = () => {
                             ) : null
                           }
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-primary transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-primary transition-colors"
                           }}
                           isInvalid={!!staffErrors.email}
                           errorMessage={staffErrors.email}
@@ -373,10 +401,10 @@ const UserRegistration = () => {
                           }}
                           startContent={<FiLock className="text-primary" />}
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-primary transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-primary transition-colors"
                           }}
                           description="Minimum 8 characters, include uppercase, lowercase, numbers, and symbols"
                           isInvalid={!!staffErrors.password}
@@ -409,10 +437,10 @@ const UserRegistration = () => {
                         value={staffForm.position}
                         onChange={(e) => setStaffForm({ ...staffForm, position: e.target.value })}
                         startContent={<FiUser className="text-primary" />}
-                        variant="bordered"
+                        variant="flat"
                         classNames={{
                           input: "text-base",
-                          inputWrapper: "border-default-300 hover:border-primary transition-colors"
+                          inputWrapper: "bg-white/50 border-default-300 hover:border-primary transition-colors"
                         }}
                         description="Job title or role description"
                       />
@@ -486,10 +514,10 @@ const UserRegistration = () => {
                           }}
                           startContent={<FiUser className="text-danger" />}
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-danger transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-danger transition-colors"
                           }}
                           isInvalid={!!adminErrors.firstName}
                           errorMessage={adminErrors.firstName}
@@ -506,10 +534,10 @@ const UserRegistration = () => {
                           }}
                           startContent={<FiUser className="text-danger" />}
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-danger transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-danger transition-colors"
                           }}
                           isInvalid={!!adminErrors.lastName}
                           errorMessage={adminErrors.lastName}
@@ -536,10 +564,10 @@ const UserRegistration = () => {
                             ) : null
                           }
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-danger transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-danger transition-colors"
                           }}
                           description="3-20 characters, letters, numbers, and underscores only"
                           isInvalid={!!adminErrors.username}
@@ -565,10 +593,10 @@ const UserRegistration = () => {
                             ) : null
                           }
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-danger transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-danger transition-colors"
                           }}
                           isInvalid={!!adminErrors.email}
                           errorMessage={adminErrors.email}
@@ -590,10 +618,10 @@ const UserRegistration = () => {
                           }}
                           startContent={<FiLock className="text-danger" />}
                           isRequired
-                          variant="bordered"
+                          variant="flat"
                           classNames={{
                             input: "text-base",
-                            inputWrapper: "border-default-300 hover:border-danger transition-colors"
+                            inputWrapper: "bg-white/50 border-default-300 hover:border-danger transition-colors"
                           }}
                           description="Minimum 8 characters, include uppercase, lowercase, numbers, and symbols"
                           isInvalid={!!adminErrors.password}
